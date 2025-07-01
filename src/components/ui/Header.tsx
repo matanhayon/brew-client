@@ -2,6 +2,7 @@ import { useTheme } from "@/context/theme-provider";
 import React from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "../mode-toggle";
+import { NavBar } from "../NavBar";
 
 const Header = () => {
   const { theme } = useTheme();
@@ -18,6 +19,7 @@ const Header = () => {
             className="h-18"
           />
         </Link>
+        <NavBar />
         <ModeToggle />
       </div>
     </header>
