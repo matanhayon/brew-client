@@ -40,27 +40,27 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
+      title: "Home",
+      url: "/",
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
+      title: "My Recipes",
       url: "#",
       icon: IconListDetails,
     },
     {
-      title: "Analytics",
+      title: "Brewying Stats",
       url: "#",
       icon: IconChartBar,
     },
     {
-      title: "Projects",
-      url: "#",
+      title: "Browse Recepies",
+      url: "/community/recipes",
       icon: IconFolder,
     },
     {
-      title: "Team",
+      title: "Brewery Team",
       url: "#",
       icon: IconUsers,
     },

@@ -19,6 +19,10 @@ function App() {
             <Route path="/community/recipes" element={<RecipesPage />} />
             <Route path="/community/recipes/:id" element={<RecipeDetail />} />
             <Route
+              path="/recipes/add"
+              element={<PagePlaceholder title="Add Recipe" />}
+            />
+            <Route
               path="/recipes/styles"
               element={<PagePlaceholder title="Recipes by Style" />}
             />

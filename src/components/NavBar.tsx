@@ -1,5 +1,12 @@
 import * as React from "react";
 import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -75,14 +82,56 @@ const communityItems = [
   },
 ];
 
+const beerInfoItems = [
+  {
+    title: "Styles Guide",
+    href: "/beer/styles",
+    description: "Explore beer styles and characteristics.",
+  },
+  {
+    title: "Ingredients",
+    href: "/beer/ingredients",
+    description: "Learn about hops, malts, yeast, and water.",
+  },
+  {
+    title: "Techniques",
+    href: "/beer/techniques",
+    description: "Brewing methods, fermentation tips, and more.",
+  },
+];
+
+const learningItems = [
+  {
+    title: "Brewing 101",
+    href: "/learn/basics",
+    description: "Beginner’s guide to home brewing.",
+  },
+  {
+    title: "Advanced Techniques",
+    href: "/learn/advanced",
+    description: "Take your brewing to the next level.",
+  },
+  {
+    title: "Video Tutorials",
+    href: "/learn/videos",
+    description: "Watch walkthroughs and brewing sessions.",
+  },
+];
+
 export function NavBar() {
   return (
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
         <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard" className="p-2 font-medium">
+            Dashboard
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
           <NavigationMenuTrigger>Browse Recipes</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+            <ul className="grid w-[500px] gap-2 md:grid-cols-2">
               {browseRecipes.map(({ title, href, description }) => (
                 <ListItem key={title} title={title} href={href}>
                   {description}
@@ -95,8 +144,34 @@ export function NavBar() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Brew</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+            <ul className="grid w-[500px] gap-2 md:grid-cols-2">
               {brewTools.map(({ title, href, description }) => (
+                <ListItem key={title} title={title} href={href}>
+                  {description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Beer Info</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[500px] gap-2 md:grid-cols-2">
+              {beerInfoItems.map(({ title, href, description }) => (
+                <ListItem key={title} title={title} href={href}>
+                  {description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Learn</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[500px] gap-2 md:grid-cols-2">
+              {learningItems.map(({ title, href, description }) => (
                 <ListItem key={title} title={title} href={href}>
                   {description}
                 </ListItem>
@@ -108,7 +183,7 @@ export function NavBar() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>History</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[300px] gap-2 md:w-[400px]">
+            <ul className="grid w-[400px] gap-2">
               {historyItems.map(({ title, href, description }) => (
                 <ListItem key={title} title={title} href={href}>
                   {description}
@@ -121,7 +196,7 @@ export function NavBar() {
         <NavigationMenuItem>
           <NavigationMenuTrigger>Community</NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+            <ul className="grid w-[500px] gap-2 md:grid-cols-2">
               {communityItems.map(({ title, href, description }) => (
                 <ListItem key={title} title={title} href={href}>
                   {description}
@@ -129,6 +204,19 @@ export function NavBar() {
               ))}
             </ul>
           </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem className="ml-auto flex items-center">
+          <SignedOut>
+            <SignInButton>
+              <button className="px-4 py-2 text-sm font-medium border rounded hover:bg-gray-100">
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
@@ -144,7 +232,6 @@ function ListItem({
   return (
     <li {...props}>
       <NavigationMenuLink asChild>
-        {/* Use plain anchor for Vite/react-router users can swap to <Link> */}
         <a
           href={href}
           className="block p-2 rounded hover:bg-gray-100 no-underline"
