@@ -1,0 +1,191 @@
+[
+  {
+    "id": "1",
+    "name": "Hoppy Trails IPA",
+    "style": "IPA",
+    "description": "A bright, citrusy India Pale Ale with a bold hop aroma and a crisp finish.",
+    "createdBy": "user-001",
+    "ingredients": [
+      { "name": "Pale Malt", "amount": "5kg", "type": "grain" },
+      { "name": "Citra Hops", "amount": "50g", "type": "hops" },
+      { "name": "Yeast", "amount": "1 packet", "type": "yeast" }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Mash",
+        "temperatureC": 67,
+        "durationMin": 60
+      },
+      {
+        "stepNumber": 2,
+        "action": "Boil",
+        "temperatureC": 100,
+        "durationMin": 60
+      },
+      {
+        "stepNumber": 3,
+        "action": "Ferment",
+        "temperatureC": 20,
+        "durationMin": 100
+      }
+    ],
+    "targetABV": 6.5,
+    "targetIBU": 55,
+    "targetSRM": 6,
+    "originalGravity": "1.060",
+    "finalGravity": "1.012",
+    "batchSize": "5 gal",
+    "boilTimeMin": 60,
+    "mashTempC": 67,
+    "mashTimeMin": 60,
+    "imageUrl": "https://thebeerly.com/uploads/lagunitas-ipa.jpg",
+    "notes": "Best consumed fresh. Dry hop on day 5.",
+    "brewedCount": 187
+  },
+  {
+    "id": "2",
+    "name": "Midnight Stout",
+    "style": "Stout",
+    "description": "A rich, dark stout with notes of coffee, chocolate, and roasted barley.",
+    "createdBy": "user-002",
+    "ingredients": [
+      { "name": "Roasted Barley", "amount": "1kg", "type": "grain" },
+      { "name": "Chocolate Malt", "amount": "0.5kg", "type": "grain" },
+      { "name": "East Kent Goldings", "amount": "40g", "type": "hops" },
+      { "name": "Yeast", "amount": "1 packet", "type": "yeast" }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Mash",
+        "temperatureC": 65,
+        "durationMin": 75
+      },
+      {
+        "stepNumber": 2,
+        "action": "Boil",
+        "temperatureC": 100,
+        "durationMin": 60
+      },
+      {
+        "stepNumber": 3,
+        "action": "Ferment",
+        "temperatureC": 18,
+        "durationMin": 120
+      }
+    ],
+    "targetABV": 5.8,
+    "targetIBU": 35,
+    "targetSRM": "35–40",
+    "originalGravity": "1.065",
+    "finalGravity": "1.015",
+    "batchSize": "5 gal",
+    "boilTimeMin": 60,
+    "mashTempC": 65,
+    "mashTimeMin": 75,
+    "imageUrl": "https://cheersall.com/cdn/shop/articles/cheers_all_stout_5.19_1024x1024.jpg?v=1621451552",
+    "notes": "Condition for at least 2 weeks to mellow the roast character.",
+    "brewedCount": 102
+  },
+  {
+    "id": "3",
+    "name": "Sunset Saison",
+    "style": "Saison",
+    "description": "A light and spicy farmhouse ale with fruity esters and a dry finish.",
+    "createdBy": "user-003",
+    "ingredients": [
+      { "name": "Pilsner Malt", "amount": "4kg", "type": "grain" },
+      { "name": "Saaz Hops", "amount": "30g", "type": "hops" },
+      { "name": "Saison Yeast", "amount": "1 packet", "type": "yeast" }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Mash",
+        "temperatureC": 64,
+        "durationMin": 60
+      },
+      {
+        "stepNumber": 2,
+        "action": "Boil",
+        "temperatureC": 100,
+        "durationMin": 75
+      },
+      {
+        "stepNumber": 3,
+        "action": "Ferment",
+        "temperatureC": 22,
+        "durationMin": 90
+      }
+    ],
+    "targetABV": 6.2,
+    "targetIBU": 25,
+    "targetSRM": 5,
+    "originalGravity": "1.055",
+    "finalGravity": "1.008",
+    "batchSize": "5 gal",
+    "boilTimeMin": 75,
+    "mashTempC": 64,
+    "mashTimeMin": 60,
+    "imageUrl": "https://www.foodandwine.com/thmb/hPeBBwyR6ul6I-Adai_AG6kOvUk=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/The-20-Essential-Fruit-Beers-Any-Serious-Beer-Drinker-Should-Know-FT-BLOG0923-12967d6c1e17412ab6c1d3613264bcc1.jpg",
+    "notes": "Ferment warm to enhance saison character.",
+    "brewedCount": 56
+  },
+  {
+    "id": "4",
+    "name": "Kuhn’s Pilsner",
+    "style": "German Pilsner",
+    "description": "A light, crisp pilsner that pairs perfectly with cozy comfort food. Brewed by Steve Ruch and featured in Zymurgy magazine.",
+    "createdBy": "user-004",
+    "ingredients": [
+      { "name": "Best Malz Pilsner Malt", "amount": "3.1kg", "type": "grain" },
+      { "name": "Hallertauer Mittelfrüh", "amount": "9g", "type": "hops" },
+      { "name": "Hallertauer Mittelfrüh", "amount": "25g", "type": "hops" },
+      { "name": "Hallertauer Mittelfrüh", "amount": "18g", "type": "hops" },
+      { "name": "Hallertauer Mittelfrüh", "amount": "4g", "type": "hops" },
+      { "name": "W-34/70 Yeast", "amount": "23g", "type": "yeast" },
+      { "name": "Irish Moss", "amount": "pinch", "type": "adjunct" },
+      { "name": "Yeast Nutrient", "amount": "0.25 tsp", "type": "adjunct" },
+      { "name": "Corn Sugar", "amount": "106g", "type": "adjunct" }
+    ],
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "Mash",
+        "temperatureC": 66,
+        "durationMin": 90
+      },
+      {
+        "stepNumber": 2,
+        "action": "Boil",
+        "temperatureC": 100,
+        "durationMin": 60
+      },
+      {
+        "stepNumber": 3,
+        "action": "Hop Stand",
+        "temperatureC": 90,
+        "durationMin": 30
+      },
+      {
+        "stepNumber": 4,
+        "action": "Ferment",
+        "temperatureC": 12,
+        "durationMin": 504
+      }
+    ],
+    "targetABV": 5.6,
+    "targetIBU": 37,
+    "targetSRM": 3,
+    "originalGravity": "1.048",
+    "finalGravity": "1.009",
+    "batchSize": "5 gal",
+    "boilTimeMin": 60,
+    "mashTempC": 66,
+    "mashTimeMin": 90,
+    "imageUrl": "https://cdn.homebrewersassociation.org/wp-content/uploads/2021/12/13170649/Simple-Pils-900x600.png",
+    "notes": "Lager for 6 weeks at 1°C for clarity and smoothness.",
+    "brewedCount": 211
+  }
+]

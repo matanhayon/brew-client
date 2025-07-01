@@ -1,10 +1,15 @@
 import React, { type PropsWithChildren } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "./Header";
 
 const Layout = ({ children }: PropsWithChildren) => {
+  const location = useLocation();
+
+  const showHeader = location.pathname !== "/dashboard";
+
   return (
     <div className="bg-gradient-to-br from-background to-muted">
-      <Header />
+      {showHeader && <Header />}
       <main className="min-h-screen container mx-auto px-4 py-8">
         {children}
       </main>
