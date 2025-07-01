@@ -1,4 +1,4 @@
-import React, { type PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
 

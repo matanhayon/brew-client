@@ -1,5 +1,4 @@
 import { useTheme } from "@/context/theme-provider";
-import React from "react";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "../mode-toggle";
 import { NavBar } from "../NavBar";

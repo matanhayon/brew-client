@@ -1,5 +1,4 @@
 // components/PagePlaceholder.tsx
-import React from "react";
 
 const PagePlaceholder = ({ title }: { title: string }) => (
   <div className="text-center text-muted-foreground py-20">

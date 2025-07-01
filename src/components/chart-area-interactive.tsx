@@ -257,10 +257,17 @@ export function ChartAreaInteractive() {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    });
+                    if (
+                      typeof value === "string" ||
+                      typeof value === "number" ||
+                      value instanceof Date
+                    ) {
+                      return new Date(value).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    }
+                    return ""; // fallback to empty string or a default label
                   }}
                   indicator="dot"
                 />
