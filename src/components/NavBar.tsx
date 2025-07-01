@@ -39,7 +39,7 @@ const brewTools = [
   },
   {
     title: "Equipment Setup",
-    href: "/brew/equipment",
+    href: "/dashboard",
     description: "Guide to setting up your brewing equipment.",
   },
 ];
