@@ -2,18 +2,13 @@
 export const browseRecipes = [
   {
     title: "All Recipes",
-    href: "/recipes",
+    href: "/community/recipes",
     description: "Explore our full collection of brewing recipes.",
   },
   {
-    title: "By Style",
-    href: "/recipes/styles",
-    description: "Browse recipes sorted by beer style.",
-  },
-  {
-    title: "By Difficulty",
-    href: "/recipes/difficulty",
-    description: "Find recipes by beginner, intermediate, or expert level.",
+    title: "Build Recipe",
+    href: "/community/recipes",
+    description: "Explore our full collection of brewing recipes.",
   },
 ];
 
