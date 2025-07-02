@@ -5,7 +5,7 @@ import Header from "./Header";
 const Layout = ({ children }: PropsWithChildren) => {
   const location = useLocation();
 
-  const showHeader = location.pathname !== "/dashboard";
+  const showHeader = !location.pathname.startsWith("/dashboard");
 
   return (
     <div className="bg-gradient-to-br from-background to-muted">

@@ -3,12 +3,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "./context/theme-provider";
 import Layout from "./components/ui/layout";
 import Home from "./pages/Home";
-import Dashboard from "./pages/Dashboard/page";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import RecipesPage from "./pages/RecipesPage";
 import RecipeDetail from "./pages/RecipeDetail";
 import PagePlaceholder from "./components/PagePlaceholder"; // generic fallback
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import SignInPage from "./pages/SignInPage";
+import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             />
             <Route path="/community/recipes" element={<RecipesPage />} />
             <Route path="/community/recipes/:id" element={<RecipeDetail />} />
+
             <Route
               path="/recipes/add"
               element={<PagePlaceholder title="Add Recipe" />}
@@ -63,6 +65,10 @@ function App() {
             <Route
               path="/community/events"
               element={<PagePlaceholder title="Events" />}
+            />
+            <Route
+              path="/dashboard/addrecipe/"
+              element={<DashboardAddRecipe />}
             />
           </Routes>
         </Layout>
