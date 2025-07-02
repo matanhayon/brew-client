@@ -7,6 +7,8 @@ import Dashboard from "./pages/Dashboard/page";
 import RecipesPage from "./pages/RecipesPage";
 import RecipeDetail from "./pages/RecipeDetail";
 import PagePlaceholder from "./components/PagePlaceholder"; // generic fallback
+import ProtectedRoute from "./Authentication/ProtectedRoute";
+import SignInPage from "./pages/SignInPage";
 
 function App() {
   return (
@@ -15,7 +17,15 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route path="/community/recipes" element={<RecipesPage />} />
             <Route path="/community/recipes/:id" element={<RecipeDetail />} />
             <Route
