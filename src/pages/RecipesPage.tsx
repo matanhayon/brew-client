@@ -9,10 +9,12 @@ const RecipesPage = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    // You can fetch from a real API later
-    fetch("/mock/beer-recipes.json")
+    fetch("http://localhost:3000/recipes")
       .then((res) => res.json())
-      .then((data) => setRecipes(data));
+      .then((data) => setRecipes(data))
+      .catch((error) => {
+        console.error("Error fetching recipes:", error);
+      });
   }, []);
 
   const filtered = recipes.filter((recipe) =>

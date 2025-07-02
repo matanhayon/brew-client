@@ -12,22 +12,50 @@ import { RecipeFooter } from "@/components/Racipe/RecipeFooter";
 const RecipeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [recipe, setRecipe] = useState<BeerRecipe | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/mock/beer-recipes.json")
-      .then((res) => res.json())
-      .then((data: BeerRecipe[]) => {
-        const found = data.find((r) => r.id === id);
-        setRecipe(found || null);
-      });
+    if (!id) return;
+
+    setLoading(true);
+    setError(null);
+
+    fetch(`http://localhost:3000/recipes/${id}`)
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 404) {
+            throw new Error("Recipe not found");
+          } else {
+            throw new Error("Failed to fetch recipe");
+          }
+        }
+        return res.json();
+      })
+      .then((data: BeerRecipe) => setRecipe(data))
+      .catch((err) => {
+        console.error("Error fetching recipe:", err);
+        setError(err.message);
+        setRecipe(null);
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
-  if (!recipe)
+  if (loading) {
     return (
       <p className="container mx-auto p-10 text-center text-muted-foreground italic">
-        Loading or recipe not found...
+        Loading recipe...
       </p>
     );
+  }
+
+  if (error || !recipe) {
+    return (
+      <p className="container mx-auto p-10 text-center text-destructive font-medium">
+        {error || "Recipe not found."}
+      </p>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-12 rounded-xl shadow-md border">
@@ -49,7 +77,6 @@ const RecipeDetail = () => {
       <RecipeIngredients ingredients={recipe.ingredients} />
       <RecipeSteps steps={recipe.steps} />
       {recipe.notes && <RecipeNotes notes={recipe.notes} />}
-
       <RecipeFooter brewedCount={recipe.brewedCount} />
     </div>
   );
