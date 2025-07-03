@@ -1,9 +1,442 @@
+import { useState } from "react";
 import DashboardLayout from "./DashboardLayout";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus, Trash2 } from "lucide-react";
+import type { Ingredient, BrewingStep, BeerRecipe } from "@/api/types";
+import { INGREDIENT_TYPES } from "@/api/types";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
+const currentUserId = "user-123";
 
 export default function DashboardAddRecipe() {
+  const [name, setName] = useState("");
+  const [style, setStyle] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [ingredients, setIngredients] = useState<Ingredient[]>([
+    { name: "", amount: "", type: "grain" },
+  ]);
+  const [steps, setSteps] = useState<BrewingStep[]>([
+    { stepNumber: 1, action: "" },
+  ]);
+  const [notes, setNotes] = useState("");
+
+  const [targetABV, setTargetABV] = useState("");
+  const [targetIBU, setTargetIBU] = useState("");
+  const [targetSRM, setTargetSRM] = useState("");
+  const [originalGravity, setOriginalGravity] = useState("");
+  const [finalGravity, setFinalGravity] = useState("");
+  const [batchSize, setBatchSize] = useState("");
+  const [boilTimeMin, setBoilTimeMin] = useState("");
+  const [mashTempC, setMashTempC] = useState("");
+  const [mashTimeMin, setMashTimeMin] = useState("");
+
+  const handleAddIngredient = () =>
+    setIngredients([...ingredients, { name: "", amount: "", type: "grain" }]);
+
+  const handleRemoveIngredient = (index: number) =>
+    setIngredients(ingredients.filter((_, i) => i !== index));
+
+  const handleIngredientChange = (
+    index: number,
+    field: keyof Ingredient,
+    value: string
+  ) => {
+    const updated = [...ingredients];
+
+    if (field === "type") {
+      // Only assign if value is a valid Ingredient type
+      if (
+        value === "grain" ||
+        value === "hops" ||
+        value === "yeast" ||
+        value === "adjunct" ||
+        value === "water"
+      ) {
+        updated[index][field] = value;
+      }
+    } else {
+      // name and amount are both strings
+      updated[index][field] = value;
+    }
+
+    setIngredients(updated);
+  };
+
+  const handleAddStep = () =>
+    setSteps([
+      ...steps,
+      { stepNumber: steps.length + 1, action: "", durationMin: undefined },
+    ]);
+
+  const handleRemoveStep = (index: number) =>
+    setSteps(steps.filter((_, i) => i !== index));
+
+  const handleStepChange = (
+    index: number,
+    field: keyof BrewingStep,
+    value: string
+  ) => {
+    const updated = [...steps];
+    const step = updated[index];
+
+    switch (field) {
+      case "stepNumber":
+        step.stepNumber = parseInt(value, 10);
+        break;
+      case "temperatureC":
+        step.temperatureC = value === "" ? undefined : parseFloat(value);
+        break;
+      case "durationMin":
+        step.durationMin = value === "" ? undefined : parseFloat(value);
+        break;
+      case "notes":
+        step.notes = value;
+        break;
+      case "action":
+        step.action = value;
+        break;
+    }
+
+    setSteps(updated);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newRecipe: Omit<BeerRecipe, "id"> = {
+      name,
+      style,
+      imageUrl,
+      description,
+      createdBy: currentUserId,
+      ingredients,
+      steps,
+      notes,
+      targetABV: targetABV ? parseFloat(targetABV) : undefined,
+      targetIBU: targetIBU ? parseFloat(targetIBU) : undefined,
+      targetSRM: targetSRM || undefined,
+      originalGravity: originalGravity || undefined,
+      finalGravity: finalGravity || undefined,
+      batchSize: batchSize || undefined,
+      boilTimeMin: boilTimeMin ? parseInt(boilTimeMin) : undefined,
+      mashTempC: mashTempC ? parseFloat(mashTempC) : undefined,
+      mashTimeMin: mashTimeMin ? parseInt(mashTimeMin) : undefined,
+    };
+
+    try {
+      const res = await fetch("http://localhost:3000/recipes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newRecipe),
+      });
+
+      if (!res.ok) throw new Error("Failed to add recipe");
+      alert("Recipe added!");
+    } catch (err) {
+      console.error(err);
+      alert("Error adding recipe.");
+    }
+  };
+
   return (
     <DashboardLayout>
-      <div className="px-4 lg:px-6"></div>
+      <div className="container max-w-3xl mx-auto py-12 px-4 lg:px-0">
+        <Card>
+          <CardContent className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Section label="Basic Info">
+                <LabeledInput
+                  label="Name"
+                  value={name}
+                  onChange={setName}
+                  required
+                />
+                <LabeledInput
+                  label="Style"
+                  value={style}
+                  onChange={setStyle}
+                  required
+                />
+                <LabeledInput
+                  label="Image URL"
+                  value={imageUrl}
+                  onChange={setImageUrl}
+                />
+                <LabeledTextarea
+                  label="Description"
+                  value={description}
+                  onChange={setDescription}
+                />
+              </Section>
+
+              <Section label="Ingredients">
+                {ingredients.map((ing, idx) => (
+                  <div
+                    key={idx}
+                    className="grid grid-cols-[2fr_1fr_1fr_auto] gap-2 items-end"
+                  >
+                    <Input
+                      value={ing.name}
+                      onChange={(e) =>
+                        handleIngredientChange(idx, "name", e.target.value)
+                      }
+                      placeholder="Name"
+                      required
+                    />
+                    <Input
+                      value={ing.amount}
+                      onChange={(e) =>
+                        handleIngredientChange(idx, "amount", e.target.value)
+                      }
+                      placeholder="Amount"
+                      required
+                    />
+                    <Select
+                      value={ing.type}
+                      onValueChange={(val) =>
+                        handleIngredientChange(idx, "type", val)
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {INGREDIENT_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type.charAt(0).toUpperCase() + type.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => handleRemoveIngredient(idx)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  onClick={handleAddIngredient}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Ingredient
+                </Button>
+              </Section>
+
+              <Section label="Steps">
+                {steps.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
+                  >
+                    <div className="md:col-span-2">
+                      <LabeledInput
+                        label="Action"
+                        value={step.action}
+                        onChange={(val) => handleStepChange(idx, "action", val)}
+                        required
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <LabeledInput
+                        label="Temp (°C)"
+                        value={step.temperatureC?.toString() || ""}
+                        onChange={(val) =>
+                          handleStepChange(idx, "temperatureC", val)
+                        }
+                        type="number"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <LabeledInput
+                        label="Duration (min)"
+                        value={step.durationMin?.toString() || ""}
+                        onChange={(val) =>
+                          handleStepChange(idx, "durationMin", val)
+                        }
+                        type="number"
+                      />
+                    </div>
+                    <div className="md:col-span-5">
+                      <LabeledInput
+                        label="Notes"
+                        value={step.notes || ""}
+                        onChange={(val) => handleStepChange(idx, "notes", val)}
+                      />
+                    </div>
+                    <div className="md:col-span-1 flex justify-end">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => handleRemoveStep(idx)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  onClick={handleAddStep}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Step
+                </Button>
+              </Section>
+
+              <Section label="Recipe Stats">
+                <LabeledInput
+                  label="Target ABV (%)"
+                  value={targetABV}
+                  onChange={setTargetABV}
+                  type="number"
+                />
+                <LabeledInput
+                  label="Target IBU"
+                  value={targetIBU}
+                  onChange={setTargetIBU}
+                  type="number"
+                />
+                <LabeledInput
+                  label="Target SRM"
+                  value={targetSRM}
+                  onChange={setTargetSRM}
+                />
+                <LabeledInput
+                  label="Original Gravity"
+                  value={originalGravity}
+                  onChange={setOriginalGravity}
+                />
+                <LabeledInput
+                  label="Final Gravity"
+                  value={finalGravity}
+                  onChange={setFinalGravity}
+                />
+              </Section>
+
+              <Section label="Process Parameters">
+                <LabeledInput
+                  label="Batch Size"
+                  value={batchSize}
+                  onChange={setBatchSize}
+                />
+                <LabeledInput
+                  label="Boil Time (min)"
+                  value={boilTimeMin}
+                  onChange={setBoilTimeMin}
+                  type="number"
+                />
+                <LabeledInput
+                  label="Mash Temp (°C)"
+                  value={mashTempC}
+                  onChange={setMashTempC}
+                  type="number"
+                />
+                <LabeledInput
+                  label="Mash Time (min)"
+                  value={mashTimeMin}
+                  onChange={setMashTimeMin}
+                  type="number"
+                />
+              </Section>
+
+              <LabeledTextarea
+                label="Notes"
+                value={notes}
+                onChange={setNotes}
+              />
+
+              <Button type="submit" className="w-full">
+                Submit Recipe
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </DashboardLayout>
+  );
+}
+
+function Section({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-3">
+      <h3 className="text-lg font-semibold">{label}</h3>
+      <div className="space-y-4">{children}</div>
+    </div>
+  );
+}
+
+function LabeledInput({
+  label,
+  value,
+  onChange,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        type={type}
+        required={required}
+      />
+    </div>
+  );
+}
+
+function LabeledTextarea({
+  label,
+  value,
+  onChange,
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      <Textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+      />
+    </div>
   );
 }

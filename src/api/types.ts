@@ -61,10 +61,20 @@ export interface BeerRecipe {
   brewedCount?: number; // Times brewed by community
 }
 
+export const INGREDIENT_TYPES = [
+  "grain",
+  "hops",
+  "yeast",
+  "adjunct",
+  "water",
+] as const;
+
+export type IngredientType = (typeof INGREDIENT_TYPES)[number];
+
 export interface Ingredient {
   name: string;
   amount: string; // e.g., "5kg", "20g", "10L"
-  type: "grain" | "hops" | "yeast" | "adjunct" | "water";
+  type: IngredientType;
 }
 
 export interface BrewingStep {
