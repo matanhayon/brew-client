@@ -1,14 +1,15 @@
 import { useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 import DashboardLayout from "./DashboardLayout";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
-import type { Ingredient, BrewingStep, BeerRecipe } from "@/api/types";
+import type { Ingredient, BrewingStep } from "@/api/types";
 import { INGREDIENT_TYPES } from "@/api/types";
-
 import {
   Select,
   SelectTrigger,
@@ -17,9 +18,9 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-const currentUserId = "user-123";
-
 export default function DashboardAddRecipe() {
+  const { getToken } = useAuth();
+
   const [name, setName] = useState("");
   const [style, setStyle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -56,18 +57,13 @@ export default function DashboardAddRecipe() {
     const updated = [...ingredients];
 
     if (field === "type") {
-      // Only assign if value is a valid Ingredient type
+      // Ensure `value` is one of the allowed Ingredient types
       if (
-        value === "grain" ||
-        value === "hops" ||
-        value === "yeast" ||
-        value === "adjunct" ||
-        value === "water"
+        INGREDIENT_TYPES.includes(value as (typeof INGREDIENT_TYPES)[number])
       ) {
-        updated[index][field] = value;
+        updated[index].type = value as Ingredient["type"];
       }
     } else {
-      // name and amount are both strings
       updated[index][field] = value;
     }
 
@@ -102,10 +98,8 @@ export default function DashboardAddRecipe() {
         step.durationMin = value === "" ? undefined : parseFloat(value);
         break;
       case "notes":
-        step.notes = value;
-        break;
       case "action":
-        step.action = value;
+        step[field] = value;
         break;
     }
 
@@ -115,38 +109,51 @@ export default function DashboardAddRecipe() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newRecipe: Omit<BeerRecipe, "id"> = {
+    const token = await getToken({ template: "supabase" });
+
+    const newRecipe = {
       name,
       style,
       imageUrl,
       description,
-      createdBy: currentUserId,
       ingredients,
       steps,
       notes,
-      targetABV: targetABV ? parseFloat(targetABV) : undefined,
-      targetIBU: targetIBU ? parseFloat(targetIBU) : undefined,
-      targetSRM: targetSRM || undefined,
-      originalGravity: originalGravity || undefined,
-      finalGravity: finalGravity || undefined,
-      batchSize: batchSize || undefined,
-      boilTimeMin: boilTimeMin ? parseInt(boilTimeMin) : undefined,
-      mashTempC: mashTempC ? parseFloat(mashTempC) : undefined,
-      mashTimeMin: mashTimeMin ? parseInt(mashTimeMin) : undefined,
+      targetABV: targetABV ? parseFloat(targetABV) : null,
+      targetIBU: targetIBU ? parseFloat(targetIBU) : null,
+      targetSRM: targetSRM ? parseFloat(targetSRM) : null,
+      originalGravity: originalGravity ? parseFloat(originalGravity) : null,
+      finalGravity: finalGravity ? parseFloat(finalGravity) : null,
+      batchSize: batchSize ? parseFloat(batchSize) : null,
+      boilTimeMin: boilTimeMin ? parseInt(boilTimeMin) : null,
+      mashTempC: mashTempC ? parseFloat(mashTempC) : null,
+      mashTimeMin: mashTimeMin ? parseInt(mashTimeMin) : null,
     };
 
     try {
       const res = await fetch("http://localhost:3000/recipes", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(newRecipe),
       });
 
-      if (!res.ok) throw new Error("Failed to add recipe");
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Unknown error");
+      }
+
       alert("Recipe added!");
-    } catch (err) {
-      console.error(err);
-      alert("Error adding recipe.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        alert("Error adding recipe: " + err.message);
+      } else {
+        console.error("Unexpected error", err);
+        alert("An unexpected error occurred.");
+      }
     }
   };
 
@@ -220,7 +227,6 @@ export default function DashboardAddRecipe() {
                         ))}
                       </SelectContent>
                     </Select>
-
                     <Button
                       type="button"
                       size="icon"
@@ -377,6 +383,7 @@ export default function DashboardAddRecipe() {
   );
 }
 
+// Helper components
 function Section({
   label,
   children,
