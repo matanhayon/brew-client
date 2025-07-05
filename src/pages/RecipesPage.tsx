@@ -3,6 +3,7 @@ import type { BeerRecipe } from "@/api/types";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<BeerRecipe[]>([]);
@@ -23,20 +24,28 @@ const RecipesPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-10">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Beer Recipes</h1>
-        <Input
-          placeholder="Search recipes..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+      {/* Header + Search + Button */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold">Beer Recipes</h1>
+          <Input
+            placeholder="Search recipes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:max-w-sm"
+          />
+        </div>
+
+        <Link to="/dashboard/addrecipe" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto">+ Build Recipe</Button>
+        </Link>
       </div>
 
+      {/* Recipe Grid */}
       {filtered.length === 0 ? (
         <p className="text-muted-foreground">No recipes found.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((recipe) => (
             <Link
               to={`/community/recipes/${recipe.id}`}
