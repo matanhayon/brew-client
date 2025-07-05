@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import DashboardLayout from "./DashboardLayout";
-
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +20,7 @@ import {
 
 export default function DashboardAddRecipe() {
   const { getToken } = useAuth();
-
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [style, setStyle] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -145,7 +145,13 @@ export default function DashboardAddRecipe() {
         throw new Error(errorData.error || "Unknown error");
       }
 
-      alert("Recipe added!");
+      const createdRecipe = await res.json();
+
+      if (!createdRecipe.id) {
+        throw new Error("Recipe created but missing ID");
+      }
+
+      navigate(`/community/recipes/${createdRecipe.id}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);

@@ -7,7 +7,7 @@ export const browseRecipes = [
   },
   {
     title: "Build Recipe",
-    href: "/community/recipes",
+    href: "/dashboard/addrecipe",
     description: "Explore our full collection of brewing recipes.",
   },
 ];
