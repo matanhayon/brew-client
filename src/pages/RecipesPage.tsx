@@ -36,7 +36,7 @@ const RecipesPage = () => {
           />
         </div>
 
-        <Link to="/dashboard/addrecipe" className="w-full sm:w-auto">
+        <Link to="/dashboard/build-recipe" className="w-full sm:w-auto">
           <Button className="w-full sm:w-auto">+ Build Recipe</Button>
         </Link>
       </div>

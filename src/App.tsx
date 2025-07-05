@@ -11,6 +11,9 @@ import ProtectedRoute from "./Authentication/ProtectedRoute";
 import SignInPage from "./pages/SignInPage";
 import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
 import MyRecipesPage from "./pages/Dashboard/MyRecipesPage";
+import DashboardAddBrewery from "./pages/Dashboard/DashboardAddBrewery";
+import BreweriesPage from "./pages/BreweriesPage";
+import BreweryDetail from "./pages/BreweryDetail";
 
 function App() {
   return (
@@ -31,6 +34,20 @@ function App() {
             <Route path="/community/recipes" element={<RecipesPage />} />
             <Route path="/community/recipes/:id" element={<RecipeDetail />} />
 
+            <Route path="/community/breweries" element={<BreweriesPage />} />
+            <Route
+              path="/community/breweries/:id"
+              element={<BreweryDetail />}
+            />
+
+            <Route
+              path="/dashboard/build-brewery/"
+              element={
+                <ProtectedRoute>
+                  <DashboardAddBrewery />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/dashboard/build-recipe/"
               element={
@@ -39,7 +56,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/dashboard/my-recipes/"
               element={
@@ -48,7 +64,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/brew/timer"
               element={<PagePlaceholder title="Brew Timer" />}

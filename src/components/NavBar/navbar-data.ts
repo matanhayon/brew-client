@@ -39,10 +39,16 @@ export const brewTools = [
 
 export const communityItems = [
   {
+    title: "Breweries",
+    href: "/community/breweries",
+    description: "Explore the best breweries out there!",
+  },
+  {
     title: "Forums",
     href: "/community/forums",
     description: "Discuss brewing tips and tricks.",
   },
+
   {
     title: "Events",
     href: "/community/events",
