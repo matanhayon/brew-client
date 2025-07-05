@@ -3,12 +3,19 @@ export const browseRecipes = [
   {
     title: "All Recipes",
     href: "/community/recipes",
-    description: "Explore our full collection of brewing recipes.",
+    description:
+      "Browse the ultimate collection of recipes brewed by the community",
   },
   {
     title: "Build Recipe",
-    href: "/dashboard/addrecipe",
-    description: "Explore our full collection of brewing recipes.",
+    href: "/dashboard/build-recipe",
+    description: "Get creative, mix it up, and drop some next-level brew magic",
+  },
+  {
+    title: "My Recipes",
+    href: "/dashboard/my-recipes",
+    description:
+      "Watch your own fire recipes and flex your brew game like a boss",
   },
 ];
 

@@ -38,7 +38,8 @@ export interface BeerRecipe {
   name: string;
   style: string;
   description?: string;
-  createdBy: string; // userId
+  createdBy: string;
+  user_id: string;
 
   ingredients: Ingredient[];
   steps: BrewingStep[];

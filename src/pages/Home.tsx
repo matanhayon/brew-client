@@ -39,8 +39,8 @@ const Home = () => {
           <p className="text-muted-foreground max-w-sm flex-grow">
             Have a unique brew? Share your recipe and inspire the community.
           </p>
-          <Link to="/dashboard/addrecipe" className="w-full max-w-xs">
-            <Button className="w-full h-12">Submit Recipe</Button>
+          <Link to="/dashboard/build-recipe" className="w-full max-w-xs">
+            <Button className="w-full h-12">Build Recipe</Button>
           </Link>
         </Card>
 

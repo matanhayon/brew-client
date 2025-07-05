@@ -10,6 +10,7 @@ import PagePlaceholder from "./components/PagePlaceholder"; // generic fallback
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import SignInPage from "./pages/SignInPage";
 import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
+import MyRecipesPage from "./pages/Dashboard/MyRecipesPage";
 
 function App() {
   return (
@@ -31,21 +32,23 @@ function App() {
             <Route path="/community/recipes/:id" element={<RecipeDetail />} />
 
             <Route
-              path="/recipes/add"
-              element={<PagePlaceholder title="Add Recipe" />}
+              path="/dashboard/build-recipe/"
+              element={
+                <ProtectedRoute>
+                  <DashboardAddRecipe />
+                </ProtectedRoute>
+              }
             />
+
             <Route
-              path="/recipes/styles"
-              element={<PagePlaceholder title="Recipes by Style" />}
+              path="/dashboard/my-recipes/"
+              element={
+                <ProtectedRoute>
+                  <MyRecipesPage />
+                </ProtectedRoute>
+              }
             />
-            <Route
-              path="/recipes/difficulty"
-              element={<PagePlaceholder title="Recipes by Difficulty" />}
-            />
-            <Route
-              path="/brew/start"
-              element={<PagePlaceholder title="Start a Brew" />}
-            />
+
             <Route
               path="/brew/timer"
               element={<PagePlaceholder title="Brew Timer" />}
@@ -61,14 +64,6 @@ function App() {
             <Route
               path="/community/forums"
               element={<PagePlaceholder title="Forums" />}
-            />
-            <Route
-              path="/community/events"
-              element={<PagePlaceholder title="Events" />}
-            />
-            <Route
-              path="/dashboard/addrecipe/"
-              element={<DashboardAddRecipe />}
             />
           </Routes>
         </Layout>
