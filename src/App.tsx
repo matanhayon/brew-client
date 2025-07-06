@@ -14,75 +14,89 @@ import MyRecipesPage from "./pages/Dashboard/MyRecipesPage";
 import DashboardAddBrewery from "./pages/Dashboard/DashboardAddBrewery";
 import BreweriesPage from "./pages/BreweriesPage";
 import BreweryDetail from "./pages/BreweryDetail";
+import MyBreweriesPage from "./pages/Dashboard/MyBreweriesPage";
+import { ActiveBreweryProvider } from "@/context/ActiveBreweryContext";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signin" element={<SignInPage />} />
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/community/recipes" element={<RecipesPage />} />
-            <Route path="/community/recipes/:id" element={<RecipeDetail />} />
+      <ActiveBreweryProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signin" element={<SignInPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/community/recipes" element={<RecipesPage />} />
+              <Route path="/community/recipes/:id" element={<RecipeDetail />} />
 
-            <Route path="/community/breweries" element={<BreweriesPage />} />
-            <Route
-              path="/community/breweries/:id"
-              element={<BreweryDetail />}
-            />
+              <Route path="/community/breweries" element={<BreweriesPage />} />
+              <Route
+                path="/community/breweries/:id"
+                element={<BreweryDetail />}
+              />
 
-            <Route
-              path="/dashboard/build-brewery/"
-              element={
-                <ProtectedRoute>
-                  <DashboardAddBrewery />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/build-recipe/"
-              element={
-                <ProtectedRoute>
-                  <DashboardAddRecipe />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/my-recipes/"
-              element={
-                <ProtectedRoute>
-                  <MyRecipesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/brew/timer"
-              element={<PagePlaceholder title="Brew Timer" />}
-            />
-            <Route
-              path="/history/my-brews"
-              element={<PagePlaceholder title="My Brews" />}
-            />
-            <Route
-              path="/history/notes"
-              element={<PagePlaceholder title="Tasting Notes" />}
-            />
-            <Route
-              path="/community/forums"
-              element={<PagePlaceholder title="Forums" />}
-            />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+              <Route
+                path="/dashboard/build-brewery/"
+                element={
+                  <ProtectedRoute>
+                    <DashboardAddBrewery />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/build-recipe/"
+                element={
+                  <ProtectedRoute>
+                    <DashboardAddRecipe />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/dashboard/my-recipes/"
+                element={
+                  <ProtectedRoute>
+                    <MyRecipesPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/my-breweries/"
+                element={
+                  <ProtectedRoute>
+                    <MyBreweriesPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/brew/timer"
+                element={<PagePlaceholder title="Brew Timer" />}
+              />
+              <Route
+                path="/history/my-brews"
+                element={<PagePlaceholder title="My Brews" />}
+              />
+              <Route
+                path="/history/notes"
+                element={<PagePlaceholder title="Tasting Notes" />}
+              />
+              <Route
+                path="/community/forums"
+                element={<PagePlaceholder title="Forums" />}
+              />
+            </Routes>
+          </Layout>
+        </BrowserRouter>
+      </ActiveBreweryProvider>
     </ThemeProvider>
   );
 }
