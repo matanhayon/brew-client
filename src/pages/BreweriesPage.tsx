@@ -3,6 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useUser, useAuth } from "@clerk/clerk-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type Brewery = {
   id: string;
@@ -13,8 +21,18 @@ type Brewery = {
 };
 
 const BreweriesPage = () => {
+  const { getToken } = useAuth();
+  const { user } = useUser();
   const [breweries, setBreweries] = useState<Brewery[]>([]);
   const [search, setSearch] = useState("");
+
+  const [userBreweryStatuses, setUserBreweryStatuses] = useState<
+    Record<string, "approved" | "pending">
+  >({});
+
+  const [selectedBrewery, setSelectedBrewery] = useState<Brewery | null>(null);
+  const [joinMessage, setJoinMessage] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:3000/breweries")
@@ -23,13 +41,70 @@ const BreweriesPage = () => {
       .catch((error) => console.error("Error fetching breweries:", error));
   }, []);
 
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`http://localhost:3000/breweries/membered/user?user_id=${user.id}`)
+      .then((res) => res.json())
+      .then(
+        (
+          data: {
+            id: string;
+            name: string;
+            status: "approved" | "pending";
+            role: string;
+          }[]
+        ) => {
+          const map: Record<string, "approved" | "pending"> = {};
+          data.forEach((b) => {
+            map[b.id] = b.status;
+          });
+          setUserBreweryStatuses(map);
+        }
+      )
+      .catch((error) => console.error("Error fetching user breweries:", error));
+  }, [user?.id]);
+
+  const handleSubmitJoinRequest = async () => {
+    if (!user?.id || !selectedBrewery) return;
+
+    try {
+      const token = await getToken({ template: "supabase" });
+
+      const res = await fetch(`http://localhost:3000/breweries/join`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          brewery_id: selectedBrewery.id,
+          message: joinMessage,
+          status: "pending",
+        }),
+      });
+
+      if (res.ok) {
+        setUserBreweryStatuses((prev) => ({
+          ...prev,
+          [selectedBrewery.id]: "pending",
+        }));
+        setDialogOpen(false);
+        setJoinMessage("");
+      } else {
+        console.error("Failed to send join request");
+      }
+    } catch (err) {
+      console.error("Error sending join request:", err);
+    }
+  };
+
   const filtered = breweries.filter((brewery) =>
     brewery.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="container mx-auto px-4 py-10">
-      {/* Header + Search + Button */}
+      {/* Header + Search + Build Button */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold">Breweries</h1>
@@ -50,13 +125,14 @@ const BreweriesPage = () => {
         <p className="text-muted-foreground">No breweries found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((brewery) => (
-            <Link
-              to={`/community/breweries/${brewery.id}`}
-              key={brewery.id}
-              className="block hover:shadow-md transition overflow-hidden rounded"
-            >
-              <Card>
+          {filtered.map((brewery) => {
+            const status = userBreweryStatuses[brewery.id];
+
+            return (
+              <Card
+                key={brewery.id}
+                className="flex flex-col justify-between overflow-hidden"
+              >
                 <img
                   src={brewery.image_url || "/images/default-brewery.png"}
                   alt={brewery.name}
@@ -70,14 +146,51 @@ const BreweriesPage = () => {
                     </p>
                   )}
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex flex-col gap-2">
                   <p className="text-sm line-clamp-3">{brewery.description}</p>
+                  {status === "approved" ? (
+                    <Button variant="outline" disabled>
+                      Already a member
+                    </Button>
+                  ) : status === "pending" ? (
+                    <Button variant="outline" disabled>
+                      Request pending
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setSelectedBrewery(brewery);
+                        setDialogOpen(true);
+                      }}
+                    >
+                      + Request To Join Brewery
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       )}
+
+      {/* Join Request Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Request Message to Join {selectedBrewery?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Optional message (e.g. I love your beer!)"
+            value={joinMessage}
+            onChange={(e) => setJoinMessage(e.target.value)}
+          />
+          <DialogFooter>
+            <Button onClick={handleSubmitJoinRequest}>Submit Request</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
