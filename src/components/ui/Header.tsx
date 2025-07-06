@@ -21,7 +21,9 @@ const Header = () => {
         >
           <img
             src={
-              theme === "dark" ? "/dark-mode-logo.png" : "/light-mode-logo.png"
+              theme === "dark"
+                ? "/images/dark-mode-logo.png"
+                : "/images/light-mode-logo.png"
             }
             alt="logo"
             className="h-12"

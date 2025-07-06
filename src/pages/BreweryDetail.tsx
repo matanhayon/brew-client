@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+
+type BreweryMember = {
+  id: number;
+  user_id: string;
+  role: string;
+  joined_at: string;
+  user_name: string;
+  user_email: string;
+  user_image: string;
+};
 
 type Brewery = {
   id: string;
@@ -9,6 +19,7 @@ type Brewery = {
   description?: string;
   image_url?: string;
   is_joinable?: boolean;
+  brewery_members?: BreweryMember[];
 };
 
 const BreweryDetail = () => {
@@ -58,6 +69,12 @@ const BreweryDetail = () => {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-12 rounded-xl shadow-md border">
+      <Link
+        to="/community/breweries"
+        className="inline-block mb-6 text-primary underline hover:opacity-80 transition"
+      >
+        ← Back to Breweries
+      </Link>
       <h1 className="text-4xl font-bold mb-4">{brewery.name}</h1>
 
       {/* Location info */}
@@ -83,6 +100,45 @@ const BreweryDetail = () => {
         <p className="text-base sm:text-lg leading-relaxed mb-6">
           {brewery.description}
         </p>
+      )}
+
+      {/* Members */}
+      {brewery.brewery_members && brewery.brewery_members.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold mb-3">Members</h2>
+          <ul className="space-y-2">
+            {brewery.brewery_members.map((member) => (
+              <li
+                key={member.id}
+                className="border rounded p-3 shadow-sm flex justify-between items-center"
+              >
+                <div className="flex items-center space-x-3">
+                  {member.user_image && (
+                    <img
+                      src={member.user_image}
+                      alt={member.user_name}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  )}
+                  <div>
+                    <p className="font-medium">{member.user_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {member.user_email}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Role:{" "}
+                      {member.role.charAt(0).toUpperCase() +
+                        member.role.slice(1)}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Joined: {new Date(member.joined_at).toLocaleDateString()}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {/* Public/Joinable status */}

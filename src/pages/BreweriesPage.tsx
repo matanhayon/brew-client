@@ -57,13 +57,11 @@ const BreweriesPage = () => {
               className="block hover:shadow-md transition overflow-hidden rounded"
             >
               <Card>
-                {brewery.image_url && (
-                  <img
-                    src={brewery.image_url}
-                    alt={brewery.name}
-                    className="h-48 w-full object-cover"
-                  />
-                )}
+                <img
+                  src={brewery.image_url || "/images/default-brewery.png"}
+                  alt={brewery.name}
+                  className="h-48 w-full object-cover"
+                />
                 <CardHeader>
                   <CardTitle className="text-xl">{brewery.name}</CardTitle>
                   {brewery.location && (

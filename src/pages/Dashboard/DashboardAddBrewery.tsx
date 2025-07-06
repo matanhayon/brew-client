@@ -1,3 +1,5 @@
+import { useUser } from "@clerk/clerk-react";
+
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import DashboardLayout from "./DashboardLayout";
@@ -16,6 +18,7 @@ import {
 } from "@/components/ui/select";
 
 export default function DashboardAddBrewery() {
+  const { user } = useUser();
   const { getToken } = useAuth();
   const navigate = useNavigate();
 
@@ -23,12 +26,42 @@ export default function DashboardAddBrewery() {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isJoinable, setIsJoinable] = useState("false");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = await getToken({ template: "supabase" });
+    let imageUrl = "";
+
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      if (user?.id) {
+        formData.append("user_id", user.id);
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/upload/brewery-photo", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Upload failed");
+        }
+
+        const uploadRes = await res.json();
+        imageUrl = uploadRes.publicUrl;
+      } catch (err) {
+        alert(`Failed to upload image: ${err}`);
+        return;
+      }
+    }
 
     const newBrewery = {
       name,
@@ -91,11 +124,23 @@ export default function DashboardAddBrewery() {
                   onChange={setCountry}
                   required
                 />
-                <LabeledInput
+                {/* <LabeledInput
                   label="Image URL"
                   value={imageUrl}
                   onChange={setImageUrl}
-                />
+                /> */}
+                <div>
+                  <Label>Upload Image</Label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                </div>
                 <LabeledTextarea
                   label="Description"
                   value={description}
