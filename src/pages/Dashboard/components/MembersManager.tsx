@@ -30,6 +30,9 @@ export const MembersManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // Changed this line to use `brewery.role` instead of `brewery.current_user_role`
+  const isAdmin = brewery?.role === "admin";
+
   const fetchMembers = async () => {
     if (!brewery?.id) return;
     setLoading(true);
@@ -45,6 +48,7 @@ export const MembersManager: React.FC = () => {
   };
 
   const handleRoleChange = async (memberId: string, newRole: string) => {
+    if (!isAdmin) return;
     setRefreshing(true);
     try {
       await fetch(`${API_URL}/breweries/members/${memberId}/role`, {
@@ -61,7 +65,8 @@ export const MembersManager: React.FC = () => {
   };
 
   const handleKick = async (memberId: string) => {
-    if (!confirm("Are you sure you want to remove this member?")) return;
+    if (!isAdmin || !confirm("Are you sure you want to remove this member?"))
+      return;
     setRefreshing(true);
     try {
       await fetch(`${API_URL}/breweries/members/${memberId}`, {
@@ -120,27 +125,37 @@ export const MembersManager: React.FC = () => {
             <CardContent className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-2">
                 <span className="text-sm">Role:</span>
-                <Select
-                  value={member.role}
-                  onValueChange={(value) => handleRoleChange(member.id, value)}
-                >
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="brewer">Brewer</SelectItem>
-                    <SelectItem value="viewer">Viewer</SelectItem>
-                  </SelectContent>
-                </Select>
+                {isAdmin ? (
+                  <Select
+                    value={member.role}
+                    onValueChange={(value) =>
+                      handleRoleChange(member.id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="brewer">Brewer</SelectItem>
+                      <SelectItem value="viewer">Viewer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <span className="text-sm font-medium capitalize">
+                    {member.role}
+                  </span>
+                )}
               </div>
-              <Button
-                variant="destructive"
-                onClick={() => handleKick(member.id)}
-                disabled={refreshing}
-              >
-                Remove
-              </Button>
+              {isAdmin && (
+                <Button
+                  variant="destructive"
+                  onClick={() => handleKick(member.id)}
+                  disabled={refreshing}
+                >
+                  Remove
+                </Button>
+              )}
             </CardContent>
           </Card>
         ))
