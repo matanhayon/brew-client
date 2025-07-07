@@ -56,12 +56,12 @@ const data = {
     },
     {
       title: "My Recipes",
-      url: "#",
+      url: "/dashboard/my-recipes",
       icon: IconListDetails,
     },
     {
-      title: "Brewying Stats",
-      url: "#",
+      title: "Brewying Recepies",
+      url: "/dashboard/brewery-recipes",
       icon: IconChartBar,
     },
     {
