@@ -16,7 +16,9 @@ export default function BreweryDropdownItems() {
   useEffect(() => {
     if (!user?.id) return;
 
-    fetch(`http://localhost:3000/breweries/membered/user?user_id=${user.id}`)
+    fetch(
+      `http://localhost:3000/breweries/membered/user/approved?user_id=${user.id}`
+    )
       .then((res) => res.json())
       .then((data) => setBreweries(data));
   }, [user?.id]);

@@ -5,8 +5,8 @@ import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { JoinRequestManager } from "@/components/JoinRequestManager";
 import data from "./data.json";
+import { BreweryUserManager } from "./components/BreweryUserManager";
 
 export default function Dashboard() {
   const { isLoaded, isSignedIn } = useUser();
@@ -47,7 +47,7 @@ export default function Dashboard() {
                 <div className="px-4 lg:px-6">
                   <ChartAreaInteractive />
                 </div>
-                <JoinRequestManager />
+                <BreweryUserManager />
                 <DataTable data={data} />
               </div>
             </div>

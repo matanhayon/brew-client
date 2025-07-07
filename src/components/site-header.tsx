@@ -4,6 +4,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Header from "./ui/Header";
+import { useActiveBrewery } from "@/context/ActiveBreweryContext";
 
 function kebabToSpacedCamelCase(str: string) {
   return str
@@ -14,6 +15,7 @@ function kebabToSpacedCamelCase(str: string) {
 
 export function SiteHeader() {
   const location = useLocation();
+  const { brewery } = useActiveBrewery();
 
   const pathSegments = location.pathname.split("/").filter(Boolean);
   const lastSegment = pathSegments.length
@@ -40,8 +42,11 @@ export function SiteHeader() {
               size="sm"
               className="hidden sm:flex"
             >
-              <Link to="/brewery" className="dark:text-foreground">
-                Brewery Page
+              <Link
+                to={`/community/breweries/${brewery?.id}`}
+                className="dark:text-foreground"
+              >
+                {brewery?.name}
               </Link>
             </Button>
           </div>
