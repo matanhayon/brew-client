@@ -14,7 +14,6 @@ import MyRecipesPage from "./pages/Dashboard/MyRecipesPage";
 import DashboardAddBrewery from "./pages/Dashboard/DashboardAddBrewery";
 import BreweriesPage from "./pages/BreweriesPage";
 import BreweryDetail from "./pages/BreweryDetail";
-import MyBreweriesPage from "./pages/Dashboard/MyBreweriesPage";
 import { ActiveBreweryProvider } from "@/context/ActiveBreweryContext";
 
 function App() {
@@ -64,15 +63,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <MyRecipesPage />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
-                path="/dashboard/my-breweries/"
-                element={
-                  <ProtectedRoute>
-                    <MyBreweriesPage />
                   </ProtectedRoute>
                 }
               />
