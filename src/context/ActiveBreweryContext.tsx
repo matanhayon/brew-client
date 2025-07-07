@@ -32,7 +32,6 @@ const ActiveBreweryContext = createContext<
 
 export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
   const { user } = useUser();
-  console.log("ActiveBreweryProvider rendered. user.id =", user?.id);
   const [brewery, setBrewery] = useState<ActiveBrewery | null>(null);
   const [breweries, setBreweries] = useState<Brewery[]>([]);
 
@@ -62,13 +61,11 @@ export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
   // Fetch user's breweries from backend
   useEffect(() => {
     if (!user?.id) return;
-    console.log("Fetching breweries. user.id =", user?.id);
     fetch(
       `http://localhost:3000/breweries/membered/user/approved?user_id=${user.id}`
     )
       .then((res) => res.json())
       .then((data: BreweryApiResponseItem[]) => {
-        console.log("Data ", data);
         const parsed: Brewery[] = data.map((item) => ({
           id: item.id,
           name: item.name,
