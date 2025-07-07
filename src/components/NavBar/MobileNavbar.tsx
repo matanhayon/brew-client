@@ -1,13 +1,13 @@
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
+  // DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-import { MenuIcon } from "lucide-react";
+// import { MenuIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   SignedIn,
@@ -16,16 +16,19 @@ import {
   UserButton,
 } from "@clerk/clerk-react";
 import { browseRecipes, brewTools, communityItems } from "./navbar-data";
+// import { SidebarTrigger } from "../ui/sidebar";
 
 export function MobileNavbar() {
   return (
-    <div className="md:hidden flex items-center justify-end px-4 py-2 border-b">
+    <div className="md:hidden flex items-center justify-end px-4 py-2">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        {/* <DropdownMenuTrigger asChild>
           <button className="p-2 rounded border">
             <MenuIcon className="w-5 h-5" />
           </button>
-        </DropdownMenuTrigger>
+        </DropdownMenuTrigger> */}
+        {/* <SidebarTrigger className="w-10 h-10 p-4 text-2xl rounded border" /> */}
+
         <DropdownMenuContent align="end" className="w-56">
           {/* Dashboard link */}
           <DropdownMenuItem asChild>

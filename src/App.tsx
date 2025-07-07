@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import RecipesPage from "./pages/RecipesPage";
 import RecipeDetail from "./pages/RecipeDetail";
-import PagePlaceholder from "./components/PagePlaceholder"; // generic fallback
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import SignInPage from "./pages/SignInPage";
 import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
@@ -75,23 +74,6 @@ function App() {
                     <BreweryMembersRecipesPage />
                   </ProtectedRoute>
                 }
-              />
-
-              <Route
-                path="/brew/timer"
-                element={<PagePlaceholder title="Brew Timer" />}
-              />
-              <Route
-                path="/history/my-brews"
-                element={<PagePlaceholder title="My Brews" />}
-              />
-              <Route
-                path="/history/notes"
-                element={<PagePlaceholder title="Tasting Notes" />}
-              />
-              <Route
-                path="/community/forums"
-                element={<PagePlaceholder title="Forums" />}
               />
             </Routes>
           </Layout>

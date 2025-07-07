@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth, useUser } from "@clerk/clerk-react";
-import DashboardLayout from "./DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -200,236 +199,230 @@ export default function DashboardAddRecipe() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="container max-w-3xl mx-auto py-12 px-4 lg:px-0">
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Section label="Basic Info">
-                <LabeledInput
-                  label="Name"
-                  value={name}
-                  onChange={setName}
-                  required
+    <div className="container max-w-3xl mx-auto py-12 px-4 lg:px-0">
+      <Card>
+        <CardContent className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Section label="Basic Info">
+              <LabeledInput
+                label="Name"
+                value={name}
+                onChange={setName}
+                required
+              />
+              <LabeledInput
+                label="Style"
+                value={style}
+                onChange={setStyle}
+                required
+              />
+              <div>
+                <Label>Upload Image</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setImageFile(e.target.files[0]);
+                    }
+                  }}
                 />
-                <LabeledInput
-                  label="Style"
-                  value={style}
-                  onChange={setStyle}
-                  required
-                />
-                <div>
-                  <Label>Upload Image</Label>
+              </div>
+
+              <LabeledTextarea
+                label="Description"
+                value={description}
+                onChange={setDescription}
+              />
+            </Section>
+
+            <Section label="Ingredients">
+              {ingredients.map((ing, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-[2fr_1fr_1fr_auto] gap-2 items-end"
+                >
                   <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setImageFile(e.target.files[0]);
-                      }
-                    }}
+                    value={ing.name}
+                    onChange={(e) =>
+                      handleIngredientChange(idx, "name", e.target.value)
+                    }
+                    placeholder="Name"
+                    required
                   />
-                </div>
-
-                <LabeledTextarea
-                  label="Description"
-                  value={description}
-                  onChange={setDescription}
-                />
-              </Section>
-
-              <Section label="Ingredients">
-                {ingredients.map((ing, idx) => (
-                  <div
-                    key={idx}
-                    className="grid grid-cols-[2fr_1fr_1fr_auto] gap-2 items-end"
+                  <Input
+                    value={ing.amount}
+                    onChange={(e) =>
+                      handleIngredientChange(idx, "amount", e.target.value)
+                    }
+                    placeholder="Amount"
+                    required
+                  />
+                  <Select
+                    value={ing.type}
+                    onValueChange={(val) =>
+                      handleIngredientChange(idx, "type", val)
+                    }
                   >
-                    <Input
-                      value={ing.name}
-                      onChange={(e) =>
-                        handleIngredientChange(idx, "name", e.target.value)
-                      }
-                      placeholder="Name"
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INGREDIENT_TYPES.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => handleRemoveIngredient(idx)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                onClick={handleAddIngredient}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Ingredient
+              </Button>
+            </Section>
+
+            <Section label="Steps">
+              {steps.map((step, idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
+                >
+                  <div className="md:col-span-2">
+                    <LabeledInput
+                      label="Action"
+                      value={step.action}
+                      onChange={(val) => handleStepChange(idx, "action", val)}
                       required
                     />
-                    <Input
-                      value={ing.amount}
-                      onChange={(e) =>
-                        handleIngredientChange(idx, "amount", e.target.value)
+                  </div>
+                  <div className="md:col-span-2">
+                    <LabeledInput
+                      label="Temp (°C)"
+                      value={step.temperatureC?.toString() || ""}
+                      onChange={(val) =>
+                        handleStepChange(idx, "temperatureC", val)
                       }
-                      placeholder="Amount"
-                      required
+                      type="number"
                     />
-                    <Select
-                      value={ing.type}
-                      onValueChange={(val) =>
-                        handleIngredientChange(idx, "type", val)
+                  </div>
+                  <div className="md:col-span-2">
+                    <LabeledInput
+                      label="Duration (min)"
+                      value={step.durationMin?.toString() || ""}
+                      onChange={(val) =>
+                        handleStepChange(idx, "durationMin", val)
                       }
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {INGREDIENT_TYPES.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type.charAt(0).toUpperCase() + type.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      type="number"
+                    />
+                  </div>
+                  <div className="md:col-span-5">
+                    <LabeledInput
+                      label="Notes"
+                      value={step.notes || ""}
+                      onChange={(val) => handleStepChange(idx, "notes", val)}
+                    />
+                  </div>
+                  <div className="md:col-span-1 flex justify-end">
                     <Button
                       type="button"
                       size="icon"
                       variant="ghost"
-                      onClick={() => handleRemoveIngredient(idx)}
+                      onClick={() => handleRemoveStep(idx)}
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={handleAddIngredient}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 mr-1" /> Add Ingredient
-                </Button>
-              </Section>
-
-              <Section label="Steps">
-                {steps.map((step, idx) => (
-                  <div
-                    key={idx}
-                    className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end"
-                  >
-                    <div className="md:col-span-2">
-                      <LabeledInput
-                        label="Action"
-                        value={step.action}
-                        onChange={(val) => handleStepChange(idx, "action", val)}
-                        required
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <LabeledInput
-                        label="Temp (°C)"
-                        value={step.temperatureC?.toString() || ""}
-                        onChange={(val) =>
-                          handleStepChange(idx, "temperatureC", val)
-                        }
-                        type="number"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <LabeledInput
-                        label="Duration (min)"
-                        value={step.durationMin?.toString() || ""}
-                        onChange={(val) =>
-                          handleStepChange(idx, "durationMin", val)
-                        }
-                        type="number"
-                      />
-                    </div>
-                    <div className="md:col-span-5">
-                      <LabeledInput
-                        label="Notes"
-                        value={step.notes || ""}
-                        onChange={(val) => handleStepChange(idx, "notes", val)}
-                      />
-                    </div>
-                    <div className="md:col-span-1 flex justify-end">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => handleRemoveStep(idx)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  onClick={handleAddStep}
-                  variant="outline"
-                  size="sm"
-                >
-                  <Plus className="w-4 h-4 mr-1" /> Add Step
-                </Button>
-              </Section>
-
-              <Section label="Recipe Stats">
-                <LabeledInput
-                  label="Target ABV (%)"
-                  value={targetABV}
-                  onChange={setTargetABV}
-                  type="number"
-                />
-                <LabeledInput
-                  label="Target IBU"
-                  value={targetIBU}
-                  onChange={setTargetIBU}
-                  type="number"
-                />
-                <LabeledInput
-                  label="Target SRM"
-                  value={targetSRM}
-                  onChange={setTargetSRM}
-                />
-                <LabeledInput
-                  label="Original Gravity"
-                  value={originalGravity}
-                  onChange={setOriginalGravity}
-                />
-                <LabeledInput
-                  label="Final Gravity"
-                  value={finalGravity}
-                  onChange={setFinalGravity}
-                />
-              </Section>
-
-              <Section label="Process Parameters">
-                <LabeledInput
-                  label="Batch Size"
-                  value={batchSize}
-                  onChange={setBatchSize}
-                />
-                <LabeledInput
-                  label="Boil Time (min)"
-                  value={boilTimeMin}
-                  onChange={setBoilTimeMin}
-                  type="number"
-                />
-                <LabeledInput
-                  label="Mash Temp (°C)"
-                  value={mashTempC}
-                  onChange={setMashTempC}
-                  type="number"
-                />
-                <LabeledInput
-                  label="Mash Time (min)"
-                  value={mashTimeMin}
-                  onChange={setMashTimeMin}
-                  type="number"
-                />
-              </Section>
-
-              <LabeledTextarea
-                label="Notes"
-                value={notes}
-                onChange={setNotes}
-              />
-
-              <Button type="submit" className="w-full">
-                Submit Recipe
+                </div>
+              ))}
+              <Button
+                type="button"
+                onClick={handleAddStep}
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Step
               </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardLayout>
+            </Section>
+
+            <Section label="Recipe Stats">
+              <LabeledInput
+                label="Target ABV (%)"
+                value={targetABV}
+                onChange={setTargetABV}
+                type="number"
+              />
+              <LabeledInput
+                label="Target IBU"
+                value={targetIBU}
+                onChange={setTargetIBU}
+                type="number"
+              />
+              <LabeledInput
+                label="Target SRM"
+                value={targetSRM}
+                onChange={setTargetSRM}
+              />
+              <LabeledInput
+                label="Original Gravity"
+                value={originalGravity}
+                onChange={setOriginalGravity}
+              />
+              <LabeledInput
+                label="Final Gravity"
+                value={finalGravity}
+                onChange={setFinalGravity}
+              />
+            </Section>
+
+            <Section label="Process Parameters">
+              <LabeledInput
+                label="Batch Size"
+                value={batchSize}
+                onChange={setBatchSize}
+              />
+              <LabeledInput
+                label="Boil Time (min)"
+                value={boilTimeMin}
+                onChange={setBoilTimeMin}
+                type="number"
+              />
+              <LabeledInput
+                label="Mash Temp (°C)"
+                value={mashTempC}
+                onChange={setMashTempC}
+                type="number"
+              />
+              <LabeledInput
+                label="Mash Time (min)"
+                value={mashTimeMin}
+                onChange={setMashTimeMin}
+                type="number"
+              />
+            </Section>
+
+            <LabeledTextarea label="Notes" value={notes} onChange={setNotes} />
+
+            <Button type="submit" className="w-full">
+              Submit Recipe
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 

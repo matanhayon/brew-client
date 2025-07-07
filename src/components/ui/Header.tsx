@@ -1,42 +1,36 @@
 import { useTheme } from "@/context/theme-provider";
 import { Link } from "react-router-dom";
 import { ModeToggle } from "../mode-toggle";
-import { NavbarLayout } from "../NavBar/NavbarLayout";
+import { SidebarTrigger } from "../ui/sidebar"; // Adjust path if needed
 
 const Header = () => {
   const { theme } = useTheme();
 
   return (
     <header className="sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur py-2 supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto relative flex h-20 items-center justify-between px-4">
-        {/* Mobile: Navbar on the left */}
-        <div className="md:hidden">
-          <NavbarLayout />
+      <div className="container mx-auto flex h-20 items-center justify-between px-4">
+        {/* Left: Sidebar Trigger */}
+        <div className="flex items-center justify-start w-1/3">
+          <SidebarTrigger className="w-10 h-10 p-2 text-2xl rounded border" />
         </div>
 
-        {/* Logo: Center on mobile, left on desktop */}
-        <Link
-          to="/"
-          className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0"
-        >
-          <img
-            src={
-              theme === "dark"
-                ? "/images/dark-mode-logo.png"
-                : "/images/light-mode-logo.png"
-            }
-            alt="logo"
-            className="h-12"
-          />
-        </Link>
-
-        {/* Desktop: Navbar in the center */}
-        <div className="hidden md:block absolute left-1/2 -translate-x-1/2">
-          <NavbarLayout />
+        {/* Center: Logo */}
+        <div className="flex items-center justify-center w-1/3">
+          <Link to="/">
+            <img
+              src={
+                theme === "dark"
+                  ? "/images/dark-mode-logo.png"
+                  : "/images/light-mode-logo.png"
+              }
+              alt="logo"
+              className="h-12"
+            />
+          </Link>
         </div>
 
-        {/* Toggle: Always on the right */}
-        <div className="ml-auto">
+        {/* Right: Theme Toggle */}
+        <div className="flex items-center justify-end w-1/3">
           <ModeToggle />
         </div>
       </div>

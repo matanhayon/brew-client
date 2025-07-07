@@ -1,12 +1,15 @@
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+  useUser,
+} from "@clerk/clerk-react";
 import * as React from "react";
 import {
-  IconCamera,
   IconChartBar,
   IconDashboard,
   IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
   IconFolder,
   IconHelp,
   IconListDetails,
@@ -21,7 +24,8 @@ import { Beer } from "lucide-react";
 import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
-import { NavUser } from "@/components/nav-user";
+// import { NavUser } from "@/components/nav-user"; // no longer needed
+
 import {
   Sidebar,
   SidebarContent,
@@ -43,11 +47,6 @@ import BreweryDropdownItems from "@/components/BreweryDropdownItems";
 import { useActiveBrewery } from "@/context/ActiveBreweryContext";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Home",
@@ -60,7 +59,7 @@ const data = {
       icon: IconListDetails,
     },
     {
-      title: "Brewying Recepies",
+      title: "Brewery Recepies",
       url: "/dashboard/brewery-recipes",
       icon: IconChartBar,
     },
@@ -70,57 +69,9 @@ const data = {
       icon: IconFolder,
     },
     {
-      title: "Brewery Team",
-      url: "#",
+      title: "Browse Breweries",
+      url: "/community/breweries",
       icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
     },
   ],
   navSecondary: [
@@ -142,24 +93,20 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
+      name: "Build Recipe",
+      url: "/dashboard/build-recipe/",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
-      url: "#",
+      name: "Build Brewery",
+      url: "/dashboard/build-brewery/",
       icon: IconReport,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
     },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useUser();
   const { brewery } = useActiveBrewery();
 
   return (
@@ -191,7 +138,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <SignedOut>
+          <SignInButton>
+            <button className="w-full text-left">Sign In</button>
+          </SignInButton>
+        </SignedOut>
+
+        <SignedIn>
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl shadow-sm bg-muted">
+            <UserButton />
+            <span className="text-foreground font-medium">
+              {user?.fullName}
+            </span>
+          </div>
+        </SignedIn>
       </SidebarFooter>
     </Sidebar>
   );

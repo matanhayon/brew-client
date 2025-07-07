@@ -2,7 +2,6 @@ import { useUser } from "@clerk/clerk-react";
 
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import DashboardLayout from "./DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -103,80 +102,78 @@ export default function DashboardAddBrewery() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="container max-w-2xl mx-auto py-12 px-4 lg:px-0">
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Section label="Brewery Info">
-                <LabeledInput
-                  label="Name"
-                  value={name}
-                  onChange={setName}
-                  required
-                />
-                <LabeledInput
-                  label="City"
-                  value={city}
-                  onChange={setCity}
-                  required
-                />
-                <LabeledInput
-                  label="Country"
-                  value={country}
-                  onChange={setCountry}
-                  required
-                />
-                {/* <LabeledInput
+    <div className="container max-w-2xl mx-auto py-12 px-4 lg:px-0">
+      <Card>
+        <CardContent className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Section label="Brewery Info">
+              <LabeledInput
+                label="Name"
+                value={name}
+                onChange={setName}
+                required
+              />
+              <LabeledInput
+                label="City"
+                value={city}
+                onChange={setCity}
+                required
+              />
+              <LabeledInput
+                label="Country"
+                value={country}
+                onChange={setCountry}
+                required
+              />
+              {/* <LabeledInput
                   label="Image URL"
                   value={imageUrl}
                   onChange={setImageUrl}
                 /> */}
-                <div>
-                  <Label>Upload Image</Label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        setImageFile(e.target.files[0]);
-                      }
-                    }}
-                  />
-                </div>
-                <LabeledTextarea
-                  label="Description"
-                  value={description}
-                  onChange={setDescription}
+              <div>
+                <Label>Upload Image</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setImageFile(e.target.files[0]);
+                    }
+                  }}
                 />
-              </Section>
+              </div>
+              <LabeledTextarea
+                label="Description"
+                value={description}
+                onChange={setDescription}
+              />
+            </Section>
 
-              <Section label="Settings">
-                <div>
-                  <Label>Visible to others?</Label>
-                  <Select
-                    value={isJoinable}
-                    onValueChange={(val) => setIsJoinable(val)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select option" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="true">Yes</SelectItem>
-                      <SelectItem value="false">No</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </Section>
+            <Section label="Settings">
+              <div>
+                <Label>Visible to others?</Label>
+                <Select
+                  value={isJoinable}
+                  onValueChange={(val) => setIsJoinable(val)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Yes</SelectItem>
+                    <SelectItem value="false">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </Section>
 
-              <Button type="submit" className="w-full">
-                Create Brewery
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardLayout>
+            <Button type="submit" className="w-full">
+              Create Brewery
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
