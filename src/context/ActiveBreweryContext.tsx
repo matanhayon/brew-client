@@ -62,7 +62,9 @@ export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user?.id) return;
     fetch(
-      `http://localhost:3000/breweries/membered/user/approved?user_id=${user.id}`
+      `${
+        import.meta.env.VITE_API_URL
+      }/breweries/membered/user/approved?user_id=${user.id}`
     )
       .then((res) => res.json())
       .then((data: BreweryApiResponseItem[]) => {

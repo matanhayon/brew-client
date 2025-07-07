@@ -131,7 +131,7 @@ export default function DashboardAddRecipe() {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/recipes", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/recipes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

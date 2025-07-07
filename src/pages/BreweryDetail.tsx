@@ -34,7 +34,7 @@ const BreweryDetail = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`http://localhost:3000/breweries/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/breweries/${id}`)
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) throw new Error("Brewery not found");

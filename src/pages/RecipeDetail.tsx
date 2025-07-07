@@ -21,7 +21,7 @@ const RecipeDetail = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`http://localhost:3000/recipes/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/recipes/${id}`)
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) {

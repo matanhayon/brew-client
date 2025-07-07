@@ -10,7 +10,7 @@ const RecipesPage = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/recipes")
+    fetch(`${import.meta.env.VITE_API_URL}/recipes`)
       .then((res) => res.json())
       .then((data) => setRecipes(data))
       .catch((error) => {

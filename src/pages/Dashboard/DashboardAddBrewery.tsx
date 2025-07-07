@@ -42,13 +42,16 @@ export default function DashboardAddBrewery() {
       }
 
       try {
-        const res = await fetch("http://localhost:3000/upload/brewery-photo", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/upload/brewery-photo`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
 
         if (!res.ok) {
           const errorData = await res.json();
@@ -73,7 +76,7 @@ export default function DashboardAddBrewery() {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/breweries", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/breweries`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

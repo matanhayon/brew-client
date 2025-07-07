@@ -35,7 +35,7 @@ const BreweriesPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:3000/breweries")
+    fetch(`${import.meta.env.VITE_API_URL}/breweries`)
       .then((res) => res.json())
       .then((data) => setBreweries(data))
       .catch((error) => console.error("Error fetching breweries:", error));
@@ -43,7 +43,11 @@ const BreweriesPage = () => {
 
   useEffect(() => {
     if (!user?.id) return;
-    fetch(`http://localhost:3000/breweries/membered/user?user_id=${user.id}`)
+    fetch(
+      `${import.meta.env.VITE_API_URL}/breweries/membered/user?user_id=${
+        user.id
+      }`
+    )
       .then((res) => res.json())
       .then(
         (
@@ -70,18 +74,21 @@ const BreweriesPage = () => {
     try {
       const token = await getToken({ template: "supabase" });
 
-      const res = await fetch(`http://localhost:3000/breweries/join`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          brewery_id: selectedBrewery.id,
-          message: joinMessage,
-          status: "pending",
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/breweries/join`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            brewery_id: selectedBrewery.id,
+            message: joinMessage,
+            status: "pending",
+          }),
+        }
+      );
 
       if (res.ok) {
         setUserBreweryStatuses((prev) => ({
