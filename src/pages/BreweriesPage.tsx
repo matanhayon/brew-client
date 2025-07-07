@@ -133,31 +133,39 @@ const BreweriesPage = () => {
                 key={brewery.id}
                 className="flex flex-col justify-between overflow-hidden"
               >
-                <img
-                  src={brewery.image_url || "/images/default-brewery.png"}
-                  alt={brewery.name}
-                  className="h-48 w-full object-cover"
-                />
-                <CardHeader>
-                  <CardTitle className="text-xl">{brewery.name}</CardTitle>
-                  {brewery.location && (
-                    <p className="text-sm text-muted-foreground">
-                      {brewery.location}
+                <Link to={`/community/breweries/${brewery.id}`}>
+                  <img
+                    src={brewery.image_url || "/images/default-brewery.png"}
+                    alt={brewery.name}
+                    className="h-48 w-full object-cover"
+                  />
+                  <CardHeader>
+                    <CardTitle className="text-xl">{brewery.name}</CardTitle>
+                    {brewery.location && (
+                      <p className="text-sm text-muted-foreground">
+                        {brewery.location}
+                      </p>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm line-clamp-3">
+                      {brewery.description}
                     </p>
-                  )}
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2">
-                  <p className="text-sm line-clamp-3">{brewery.description}</p>
+                  </CardContent>
+                </Link>
+
+                <CardContent>
                   {status === "approved" ? (
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" disabled className="w-full">
                       Already a member
                     </Button>
                   ) : status === "pending" ? (
-                    <Button variant="outline" disabled>
+                    <Button variant="outline" disabled className="w-full">
                       Request pending
                     </Button>
                   ) : (
                     <Button
+                      className="w-full"
                       onClick={() => {
                         setSelectedBrewery(brewery);
                         setDialogOpen(true);
