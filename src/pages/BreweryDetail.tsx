@@ -86,14 +86,13 @@ const BreweryDetail = () => {
       )}
 
       {/* Image */}
-      {brewery.image_url && (
-        <img
-          src={brewery.image_url}
-          alt={brewery.name}
-          className="w-full max-w-3xl max-h-[500px] rounded-lg shadow mb-8 object-cover mx-auto"
-          loading="lazy"
-        />
-      )}
+
+      <img
+        src={brewery.image_url || "/images/default-brewery.png"}
+        alt={brewery.name}
+        className="w-full max-w-3xl max-h-[500px] rounded-lg shadow mb-8 object-cover mx-auto"
+        loading="lazy"
+      />
 
       {/* Description */}
       {brewery.description && (

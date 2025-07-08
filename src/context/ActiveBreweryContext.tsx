@@ -24,6 +24,7 @@ type ActiveBreweryContextType = {
   setActiveBrewery: (id: string, name: string, role: string) => void;
   clearActiveBrewery: () => void;
   breweries: Brewery[];
+  refreshBreweries: () => void;
 };
 
 const ActiveBreweryContext = createContext<
@@ -31,6 +32,28 @@ const ActiveBreweryContext = createContext<
 >(undefined);
 
 export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
+  const refreshBreweries = () => {
+    if (!user?.id) return;
+    fetch(
+      `${
+        import.meta.env.VITE_API_URL
+      }/breweries/membered/user/approved?user_id=${user.id}`
+    )
+      .then((res) => res.json())
+      .then((data: BreweryApiResponseItem[]) => {
+        const parsed: Brewery[] = data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          role: item.role,
+          status: item.status,
+        }));
+        setBreweries(parsed);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch breweries", err);
+      });
+  };
+
   const { user } = useUser();
   const [brewery, setBrewery] = useState<ActiveBrewery | null>(null);
   const [breweries, setBreweries] = useState<Brewery[]>([]);
@@ -60,25 +83,7 @@ export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
 
   // Fetch user's breweries from backend
   useEffect(() => {
-    if (!user?.id) return;
-    fetch(
-      `${
-        import.meta.env.VITE_API_URL
-      }/breweries/membered/user/approved?user_id=${user.id}`
-    )
-      .then((res) => res.json())
-      .then((data: BreweryApiResponseItem[]) => {
-        const parsed: Brewery[] = data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          role: item.role,
-          status: item.status,
-        }));
-        setBreweries(parsed);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch breweries", err);
-      });
+    refreshBreweries();
   }, [user?.id]);
 
   const setActiveBrewery = (id: string, name: string, role: string) => {
@@ -98,7 +103,13 @@ export function ActiveBreweryProvider({ children }: { children: ReactNode }) {
 
   return (
     <ActiveBreweryContext.Provider
-      value={{ brewery, setActiveBrewery, clearActiveBrewery, breweries }}
+      value={{
+        brewery,
+        setActiveBrewery,
+        clearActiveBrewery,
+        breweries,
+        refreshBreweries,
+      }}
     >
       {children}
     </ActiveBreweryContext.Provider>

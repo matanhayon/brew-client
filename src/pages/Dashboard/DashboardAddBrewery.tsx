@@ -1,5 +1,5 @@
 import { useUser } from "@clerk/clerk-react";
-
+import { useActiveBrewery } from "@/context/ActiveBreweryContext";
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
@@ -18,8 +18,10 @@ import {
 
 export default function DashboardAddBrewery() {
   const { user } = useUser();
+  const { refreshBreweries } = useActiveBrewery();
   const { getToken } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
@@ -30,17 +32,19 @@ export default function DashboardAddBrewery() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true); // start loading
+
     const token = await getToken({ template: "supabase" });
     let imageUrl = "";
 
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
-      if (user?.id) {
-        formData.append("user_id", user.id);
-      }
+    try {
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        if (user?.id) {
+          formData.append("user_id", user.id);
+        }
 
-      try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/upload/brewery-photo`,
           {
@@ -59,22 +63,17 @@ export default function DashboardAddBrewery() {
 
         const uploadRes = await res.json();
         imageUrl = uploadRes.publicUrl;
-      } catch (err) {
-        alert(`Failed to upload image: ${err}`);
-        return;
       }
-    }
 
-    const newBrewery = {
-      name,
-      city,
-      country,
-      description,
-      image_url: imageUrl,
-      is_joinable: isJoinable === "true",
-    };
+      const newBrewery = {
+        name,
+        city,
+        country,
+        description,
+        image_url: imageUrl,
+        is_joinable: isJoinable === "true",
+      };
 
-    try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/breweries`, {
         method: "POST",
         headers: {
@@ -90,6 +89,7 @@ export default function DashboardAddBrewery() {
       }
 
       const created = await res.json();
+      refreshBreweries();
       navigate(`/community/breweries/${created.id}`);
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -98,6 +98,8 @@ export default function DashboardAddBrewery() {
       } else {
         alert("Unexpected error occurred.");
       }
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -167,8 +169,8 @@ export default function DashboardAddBrewery() {
               </div>
             </Section>
 
-            <Button type="submit" className="w-full">
-              Create Brewery
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Creating..." : "Create Brewery"}
             </Button>
           </form>
         </CardContent>
