@@ -201,7 +201,7 @@ const BreweriesPage = () => {
             value={joinMessage}
             onChange={(e) => setJoinMessage(e.target.value)}
           />
-          <DialogFooter>
+          <DialogFooter className="flex justify-center sm:justify-center">
             <Button onClick={handleSubmitJoinRequest}>Submit Request</Button>
           </DialogFooter>
         </DialogContent>
