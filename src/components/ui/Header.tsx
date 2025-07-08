@@ -30,7 +30,7 @@ const Header = () => {
                   : "/images/light-mode-logo.png"
               }
               alt="logo"
-              className="h-12"
+              className="h-16"
             />
           </Link>
         </div>
