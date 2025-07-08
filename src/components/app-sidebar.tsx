@@ -9,12 +9,11 @@ import * as React from "react";
 import {
   IconChartBar,
   IconDashboard,
-  IconDatabase,
+  // IconDatabase,
   IconFolder,
-  IconHelp,
+  IconHome,
   IconListDetails,
-  IconReport,
-  IconSearch,
+  // IconReport,
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react";
@@ -54,6 +53,11 @@ const data = {
     {
       title: "Home",
       url: "/",
+      icon: IconHome,
+    },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
@@ -66,44 +70,24 @@ const data = {
       url: "/dashboard/brewery-recipes",
       icon: IconChartBar,
     },
-    {
-      title: "Browse Recepies",
-      url: "/community/recipes",
-      icon: IconFolder,
-    },
-    {
-      title: "Browse Breweries",
-      url: "/community/breweries",
-      icon: IconUsers,
-    },
   ],
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
     },
   ],
   documents: [
     {
-      name: "Build Recipe",
-      url: "/dashboard/build-recipe/",
-      icon: IconDatabase,
+      name: "Browse Recepies",
+      url: "/community/recipes",
+      icon: IconFolder,
     },
     {
-      name: "Build Brewery",
-      url: "/dashboard/build-brewery/",
-      icon: IconReport,
+      name: "Browse Breweries",
+      url: "/community/breweries",
+      icon: IconUsers,
     },
   ],
 };
@@ -121,11 +105,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SignedIn>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton className="data-[slot=sidebar-menu-button]:!p-1.5 flex items-center gap-2">
+                  <SidebarMenuButton className="flex items-center gap-2 px-4 py-6 border border-border rounded-md hover:bg-muted/50 transition-colors">
                     <Beer className="!size-5" />
                     <span className="text-base font-semibold">
                       {brewery?.name ?? "Select Brewery"}
                     </span>
+                    {/* Three vertical dots icon */}
+                    <div className="ml-auto text-xl">
+                      <span className="text-muted-foreground">⋮</span>
+                    </div>
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-60 p-2">
