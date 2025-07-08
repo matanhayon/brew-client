@@ -38,6 +38,7 @@ const MyRecipesPage = () => {
       {/* Header + Search + Button */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-2 w-full">
+          <h1 className="text-3xl font-bold">My Recipes</h1>
           <Input
             placeholder="Search my recipes..."
             value={search}

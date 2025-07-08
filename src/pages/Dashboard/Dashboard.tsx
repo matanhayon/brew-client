@@ -31,10 +31,10 @@ export default function Dashboard() {
   return (
     <>
       <SectionCards />
+      <BreweryUserManager />
       <div className="px-4 lg:px-6">
         <ChartAreaInteractive />
       </div>
-      <BreweryUserManager />
       <DataTable data={data} />
     </>
   );
