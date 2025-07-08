@@ -112,21 +112,23 @@ export const JoinRequestManager: React.FC = () => {
               <p className="text-sm italic text-muted-foreground">
                 “{req.request_message || "No message provided."}”
               </p>
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => handleApprove(req.id)}
-                  disabled={refreshing}
-                >
-                  Approve
-                </Button>
-                <Button
-                  onClick={() => handleReject(req.id)}
-                  disabled={refreshing}
-                  variant="destructive"
-                >
-                  Reject
-                </Button>
-              </div>
+              {!refreshing && (
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleApprove(req.id)}
+                    disabled={refreshing}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    onClick={() => handleReject(req.id)}
+                    disabled={refreshing}
+                    variant="destructive"
+                  >
+                    Reject
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))

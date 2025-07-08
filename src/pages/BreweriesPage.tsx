@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Loader } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 
 type Brewery = {
   id: string;
@@ -27,6 +27,7 @@ const BreweriesPage = () => {
   const [breweries, setBreweries] = useState<Brewery[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   const [userBreweryStatuses, setUserBreweryStatuses] = useState<
     Record<string, "approved" | "pending">
@@ -75,6 +76,7 @@ const BreweriesPage = () => {
   const handleSubmitJoinRequest = async () => {
     if (!user?.id || !selectedBrewery) return;
 
+    setLoadingSubmit(true);
     try {
       const token = await getToken({ template: "supabase" });
 
@@ -106,6 +108,8 @@ const BreweriesPage = () => {
       }
     } catch (err) {
       console.error("Error sending join request:", err);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
@@ -211,7 +215,16 @@ const BreweriesPage = () => {
             onChange={(e) => setJoinMessage(e.target.value)}
           />
           <DialogFooter className="flex justify-center sm:justify-center">
-            <Button onClick={handleSubmitJoinRequest}>Submit Request</Button>
+            <Button onClick={handleSubmitJoinRequest} disabled={loadingSubmit}>
+              {loadingSubmit ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Sending Request...
+                </>
+              ) : (
+                "Send Request"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
