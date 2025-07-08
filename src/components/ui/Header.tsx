@@ -1,7 +1,13 @@
 import { useTheme } from "@/context/theme-provider";
 import { Link } from "react-router-dom";
-import { ModeToggle } from "../mode-toggle";
-import { SidebarTrigger } from "../ui/sidebar"; // Adjust path if needed
+import { SidebarTrigger } from "../ui/sidebar";
+import {
+  SignedIn,
+  SignedOut,
+  // SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
+import { Button } from "./button";
 
 const Header = () => {
   const { theme } = useTheme();
@@ -30,8 +36,22 @@ const Header = () => {
         </div>
 
         {/* Right: Theme Toggle */}
-        <div className="flex items-center justify-end w-1/3">
-          <ModeToggle />
+        <div className="flex items-center justify-end w-1/3 space-x-2">
+          <SignedOut>
+            <Link to="auth">
+              <Button variant="outline">Sign In</Button>
+            </Link>
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "rounded-md",
+                },
+              }}
+            />
+          </SignedIn>
         </div>
       </div>
     </header>

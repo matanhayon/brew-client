@@ -1,7 +1,7 @@
 import {
   SignedIn,
   SignedOut,
-  SignInButton,
+  // SignInButton,
   UserButton,
   useUser,
 } from "@clerk/clerk-react";
@@ -45,6 +45,9 @@ import {
 import BreweryDropdownItems from "@/components/BreweryDropdownItems";
 
 import { useActiveBrewery } from "@/context/ActiveBreweryContext";
+import { ModeToggle } from "./mode-toggle";
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
 
 const data = {
   navMain: [
@@ -114,19 +117,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton className="data-[slot=sidebar-menu-button]:!p-1.5 flex items-center gap-2">
+            {/* If user is signed in, show the brewery dropdown */}
+            <SignedIn>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton className="data-[slot=sidebar-menu-button]:!p-1.5 flex items-center gap-2">
+                    <Beer className="!size-5" />
+                    <span className="text-base font-semibold">
+                      {brewery?.name ?? "Select Brewery"}
+                    </span>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-60 p-2">
+                  <BreweryDropdownItems />
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SignedIn>
+
+            {/* If user is signed out, show a sign-in button */}
+            <SignedOut>
+              <Link to="/auth">
+                <SidebarMenuButton className="data-[slot=sidebar-menu-button]:!p-1.5 flex items-center gap-2 text-base font-semibold">
                   <Beer className="!size-5" />
-                  <span className="text-base font-semibold">
-                    {brewery?.name ?? "Select Brewery"}
-                  </span>
+                  Sign In to Select Brewery
                 </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-60 p-2">
-                <BreweryDropdownItems />
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </Link>
+            </SignedOut>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -139,17 +155,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarFooter>
         <SignedOut>
-          <SignInButton>
-            <button className="w-full text-left">Sign In</button>
-          </SignInButton>
+          <Link to="auth">
+            <Button variant="outline" className="w-full border">
+              Sign In
+            </Button>
+          </Link>
         </SignedOut>
 
         <SignedIn>
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl shadow-sm bg-muted">
-            <UserButton />
-            <span className="text-foreground font-medium">
-              {user?.fullName}
-            </span>
+          <div className="flex justify-between items-center gap-3 px-4 py-2 rounded-xl shadow-sm bg-muted">
+            <div className="flex items-center gap-2">
+              <UserButton />
+              <span className="text-foreground font-medium">
+                {user?.fullName}
+              </span>
+            </div>
+
+            <ModeToggle />
           </div>
         </SignedIn>
       </SidebarFooter>

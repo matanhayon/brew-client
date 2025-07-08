@@ -15,6 +15,7 @@ import BreweriesPage from "./pages/BreweriesPage";
 import BreweryDetail from "./pages/BreweryDetail";
 import { ActiveBreweryProvider } from "@/context/ActiveBreweryContext";
 import BreweryMembersRecipesPage from "./pages/Dashboard/BreweryMembersRecipesPage";
+import AuthPage from "./pages/AuthPage";
 
 function App() {
   return (
@@ -24,7 +25,11 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/signin" element={<SignInPage />} />
+              <Route path="/sign-in" element={<SignInPage />} />
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/community/recipes" element={<RecipesPage />} />
+              <Route path="/community/recipes/:id" element={<RecipeDetail />} />
+
               <Route
                 path="/dashboard"
                 element={
@@ -33,10 +38,15 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/community/recipes" element={<RecipesPage />} />
-              <Route path="/community/recipes/:id" element={<RecipeDetail />} />
 
-              <Route path="/community/breweries" element={<BreweriesPage />} />
+              <Route
+                path="/community/breweries"
+                element={
+                  <ProtectedRoute>
+                    <BreweriesPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/community/breweries/:id"
                 element={<BreweryDetail />}
