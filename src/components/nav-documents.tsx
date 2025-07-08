@@ -1,30 +1,15 @@
-import {
-  // IconDots,
-  // IconFolder,
-  // IconShare3,
-  // IconTrash,
-  type Icon,
-} from "@tabler/icons-react";
-
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuSeparator,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
+import { type Icon } from "@tabler/icons-react";
 
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  // SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  // useSidebar,
 } from "@/components/ui/sidebar";
 
 import { Link } from "react-router-dom";
+import { useSidebar } from "../components/ui/sidebar";
 
 export function NavDocuments({
   items,
@@ -35,7 +20,7 @@ export function NavDocuments({
     icon: Icon;
   }[];
 }) {
-  // const { isMobile } = useSidebar();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -44,7 +29,7 @@ export function NavDocuments({
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link to={item.url}>
+              <Link to={item.url} onClick={toggleSidebar}>
                 <item.icon />
                 <span>{item.name}</span>
               </Link>
