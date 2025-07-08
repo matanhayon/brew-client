@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import type { Ingredient, BrewingStep } from "@/api/types";
 import { INGREDIENT_TYPES } from "@/api/types";
 import {
@@ -24,6 +24,7 @@ export default function DashboardAddRecipe() {
   const [name, setName] = useState("");
   const [style, setStyle] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [description, setDescription] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([
@@ -109,21 +110,19 @@ export default function DashboardAddRecipe() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    const token = await getToken({ template: "supabase" });
+    try {
+      const token = await getToken({ template: "supabase" });
+      let imageUrl = "";
 
-    let imageUrl = "";
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        if (user?.id) formData.append("user_id", user.id);
 
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
-      if (user?.id) {
-        formData.append("user_id", user.id);
-      }
-
-      try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/upload/recipe-photo`, // or your actual upload endpoint
+          `${import.meta.env.VITE_API_URL}/upload/recipe-photo`,
           {
             method: "POST",
             headers: {
@@ -140,32 +139,27 @@ export default function DashboardAddRecipe() {
 
         const uploadRes = await res.json();
         imageUrl = uploadRes.publicUrl;
-      } catch (err) {
-        alert("Failed to upload image: " + err);
-        return;
       }
-    }
 
-    const newRecipe = {
-      name,
-      style,
-      imageUrl,
-      description,
-      ingredients,
-      steps,
-      notes,
-      targetABV: targetABV ? parseFloat(targetABV) : null,
-      targetIBU: targetIBU ? parseFloat(targetIBU) : null,
-      targetSRM: targetSRM ? parseFloat(targetSRM) : null,
-      originalGravity: originalGravity ? parseFloat(originalGravity) : null,
-      finalGravity: finalGravity ? parseFloat(finalGravity) : null,
-      batchSize: batchSize ? parseFloat(batchSize) : null,
-      boilTimeMin: boilTimeMin ? parseInt(boilTimeMin) : null,
-      mashTempC: mashTempC ? parseFloat(mashTempC) : null,
-      mashTimeMin: mashTimeMin ? parseInt(mashTimeMin) : null,
-    };
+      const newRecipe = {
+        name,
+        style,
+        imageUrl,
+        description,
+        ingredients,
+        steps,
+        notes,
+        targetABV: targetABV ? parseFloat(targetABV) : null,
+        targetIBU: targetIBU ? parseFloat(targetIBU) : null,
+        targetSRM: targetSRM ? parseFloat(targetSRM) : null,
+        originalGravity: originalGravity ? parseFloat(originalGravity) : null,
+        finalGravity: finalGravity ? parseFloat(finalGravity) : null,
+        batchSize: batchSize ? parseFloat(batchSize) : null,
+        boilTimeMin: boilTimeMin ? parseInt(boilTimeMin) : null,
+        mashTempC: mashTempC ? parseFloat(mashTempC) : null,
+        mashTimeMin: mashTimeMin ? parseInt(mashTimeMin) : null,
+      };
 
-    try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/recipes`, {
         method: "POST",
         headers: {
@@ -181,20 +175,18 @@ export default function DashboardAddRecipe() {
       }
 
       const createdRecipe = await res.json();
-
       if (!createdRecipe.id) {
         throw new Error("Recipe created but missing ID");
       }
 
       navigate(`/community/recipes/${createdRecipe.id}`);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err);
-        alert("Error adding recipe: " + err.message);
-      } else {
-        console.error("Unexpected error", err);
-        alert("An unexpected error occurred.");
-      }
+    } catch (err) {
+      console.error(err);
+      alert(
+        "Error: " + (err instanceof Error ? err.message : "Unexpected error")
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -416,8 +408,15 @@ export default function DashboardAddRecipe() {
 
             <LabeledTextarea label="Notes" value={notes} onChange={setNotes} />
 
-            <Button type="submit" className="w-full">
-              Submit Recipe
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Recipe"
+              )}
             </Button>
           </form>
         </CardContent>

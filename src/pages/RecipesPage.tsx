@@ -4,18 +4,22 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Loader } from "lucide-react";
 
 const RecipesPage = () => {
   const [recipes, setRecipes] = useState<BeerRecipe[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`${import.meta.env.VITE_API_URL}/recipes`)
       .then((res) => res.json())
       .then((data) => setRecipes(data))
       .catch((error) => {
         console.error("Error fetching recipes:", error);
-      });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const filtered = recipes.filter((recipe) =>
@@ -41,8 +45,13 @@ const RecipesPage = () => {
         </Link>
       </div>
 
-      {/* Recipe Grid */}
-      {filtered.length === 0 ? (
+      {/* Recipe Grid or Loading */}
+      {loading ? (
+        <p className="text-muted-foreground flex items-center gap-2">
+          <Loader className="animate-spin w-4 h-4" />
+          Loading recipes...
+        </p>
+      ) : filtered.length === 0 ? (
         <p className="text-muted-foreground">No recipes found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

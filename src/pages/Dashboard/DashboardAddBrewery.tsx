@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
 export default function DashboardAddBrewery() {
   const { user } = useUser();
@@ -170,7 +171,14 @@ export default function DashboardAddBrewery() {
             </Section>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating..." : "Create Brewery"}
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Brewery"
+              )}
             </Button>
           </form>
         </CardContent>

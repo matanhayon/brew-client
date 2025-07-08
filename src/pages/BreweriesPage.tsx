@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import { Loader } from "lucide-react";
 
 type Brewery = {
   id: string;
@@ -25,6 +26,7 @@ const BreweriesPage = () => {
   const { user } = useUser();
   const [breweries, setBreweries] = useState<Brewery[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [userBreweryStatuses, setUserBreweryStatuses] = useState<
     Record<string, "approved" | "pending">
@@ -35,10 +37,12 @@ const BreweriesPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetch(`${import.meta.env.VITE_API_URL}/breweries`)
       .then((res) => res.json())
       .then((data) => setBreweries(data))
-      .catch((error) => console.error("Error fetching breweries:", error));
+      .catch((error) => console.error("Error fetching breweries:", error))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -127,8 +131,13 @@ const BreweriesPage = () => {
         </Link>
       </div>
 
-      {/* Brewery Grid */}
-      {filtered.length === 0 ? (
+      {/* Brewery Grid or Loading */}
+      {loading ? (
+        <p className="text-muted-foreground flex items-center gap-2">
+          <Loader className="animate-spin w-4 h-4" />
+          Loading breweries...
+        </p>
+      ) : filtered.length === 0 ? (
         <p className="text-muted-foreground">No breweries found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
