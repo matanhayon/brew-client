@@ -5,7 +5,7 @@ import type { BeerRecipe } from "@/api/types";
 import { RecipeHeader } from "@/components/Racipe/RecipeHeader";
 import { RecipeMeta } from "@/components/Racipe/RecipeMeta";
 import { RecipeSteps } from "@/components/Racipe/RecipeSteps";
-import { RecipeIngredients } from "@/components/Racipe/RecipeIngredients";
+// import { RecipeIngredients } from "@/components/Racipe/RecipeIngredients";
 import { RecipeNotes } from "@/components/Racipe/RecipeNotes";
 import { RecipeFooter } from "@/components/Racipe/RecipeFooter";
 
@@ -24,11 +24,9 @@ const RecipeDetail = () => {
     fetch(`${import.meta.env.VITE_API_URL}/recipes/${id}`)
       .then((res) => {
         if (!res.ok) {
-          if (res.status === 404) {
-            throw new Error("Recipe not found");
-          } else {
-            throw new Error("Failed to fetch recipe");
-          }
+          throw new Error(
+            res.status === 404 ? "Recipe not found" : "Failed to fetch recipe"
+          );
         }
         return res.json();
       })
@@ -60,6 +58,7 @@ const RecipeDetail = () => {
   return (
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-12 rounded-xl shadow-md border">
       <RecipeHeader id={recipe.id} name={recipe.name} style={recipe.style} />
+
       {recipe.imageUrl && (
         <img
           src={recipe.imageUrl}
@@ -68,15 +67,31 @@ const RecipeDetail = () => {
           loading="lazy"
         />
       )}
+
       {recipe.description && (
         <p className="mb-10 text-base sm:text-lg leading-relaxed">
           {recipe.description}
         </p>
       )}
+
       <RecipeMeta recipe={recipe} />
-      <RecipeIngredients ingredients={recipe.ingredients} />
-      <RecipeSteps steps={recipe.steps} />
+
+      {/* <RecipeIngredients
+        grains={recipe.grains}
+        hops={recipe.hops}
+        yeasts={recipe.yeasts}
+      /> */}
+
+      <RecipeSteps
+        mashTempC={recipe.mashTempC}
+        mashTimeMin={recipe.mashTimeMin}
+        boilTimeMin={recipe.boilTimeMin}
+        originalGravity={recipe.originalGravity}
+        finalGravity={recipe.finalGravity}
+      />
+
       {recipe.notes && <RecipeNotes notes={recipe.notes} />}
+
       <RecipeFooter brewedCount={recipe.brewedCount} />
     </div>
   );

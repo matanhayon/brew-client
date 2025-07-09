@@ -33,33 +33,48 @@ export interface Beer {
   recipeId?: string;
 }
 
+export interface Grain {
+  name: string;
+  amount: string;
+}
+
+export interface Hop {
+  name: string;
+  amount: string;
+  time: string; // e.g. "60 min", "dry hop", etc.
+}
+
+export interface Yeast {
+  name: string;
+  temperature?: string; // e.g. "18–22°C" or optional if not always known
+}
+
 export interface BeerRecipe {
   id: string;
+  created_at: string;
   name: string;
   style: string;
   description?: string;
-  createdBy: string;
-  user_id: string;
 
-  ingredients: Ingredient[];
-  steps: BrewingStep[];
-
-  targetABV?: number; // Alcohol by Volume
-  targetIBU?: number; // Bitterness
-  targetSRM?: number | string; // Color (can be a range like "4–10")
-  originalGravity?: string; // OG e.g. "1.055–1.065"
-  finalGravity?: string; // FG e.g. "varies with yeast"
-
-  batchSize?: string; // e.g. "1 gal", "5 gal"
-  boilTimeMin?: number; // e.g. 60
-  mashTempC?: number; // Average mash temp
-  mashTimeMin?: number; // e.g. 60
+  targetABV?: number;
+  targetIBU?: number;
+  targetSRM?: number | string;
+  originalGravity?: string;
+  finalGravity?: string;
+  batchSize?: string;
+  boilTimeMin?: number;
+  mashTempC?: number;
+  mashTimeMin?: number;
 
   imageUrl?: string;
+  notes?: string;
+  brewedCount?: number;
 
-  // Optional article or reference
-  notes?: string; // Author’s personal notes or insights
-  brewedCount?: number; // Times brewed by community
+  user_id: string;
+
+  grains: Grain[];
+  hops: Hop[];
+  yeasts: Yeast[];
 }
 
 export const INGREDIENT_TYPES = [

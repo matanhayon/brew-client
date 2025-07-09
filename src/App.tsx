@@ -8,7 +8,7 @@ import RecipesPage from "./pages/RecipesPage";
 import RecipeDetail from "./pages/RecipeDetail";
 import ProtectedRoute from "./Authentication/ProtectedRoute";
 import SignInPage from "./pages/SignInPage";
-import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
+// import DashboardAddRecipe from "./pages/Dashboard/DashboardAddRecipe";
 import MyRecipesPage from "./pages/Dashboard/MyRecipesPage";
 import DashboardAddBrewery from "./pages/Dashboard/DashboardAddBrewery";
 import BreweriesPage from "./pages/BreweriesPage";
@@ -16,6 +16,7 @@ import BreweryDetail from "./pages/BreweryDetail";
 import { ActiveBreweryProvider } from "@/context/ActiveBreweryContext";
 import BreweryMembersRecipesPage from "./pages/Dashboard/BreweryMembersRecipesPage";
 import AuthPage from "./pages/AuthPage";
+import BuildRecipePage from "./pages/Dashboard/BuildRecipe";
 
 function App() {
   return (
@@ -64,7 +65,8 @@ function App() {
                 path="/dashboard/build-recipe/"
                 element={
                   <ProtectedRoute>
-                    <DashboardAddRecipe />
+                    {/* <DashboardAddRecipe /> */}
+                    <BuildRecipePage />
                   </ProtectedRoute>
                 }
               />
