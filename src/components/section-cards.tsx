@@ -7,7 +7,6 @@ import {
   IconPlugConnectedX,
   IconBook,
 } from "@tabler/icons-react";
-
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,6 +19,9 @@ import {
 } from "@/components/ui/card";
 import { useActiveBrewery } from "@/context/ActiveBreweryContext";
 
+import { fetchRecipes } from "@/api/recipes";
+import { fetchSensorStatus, fetchMembers, fetchBrews } from "@/api/breweries";
+
 export function SectionCards() {
   const [totalRecipes, setTotalRecipes] = useState<number | null | string>(
     null
@@ -28,7 +30,6 @@ export function SectionCards() {
     null
   );
   const [totalBrews, setTotalBrews] = useState<number | null | string>(null);
-
   const [deviceTemp, setDeviceTemp] = useState<number | null>(null);
   const [deviceStatus, setDeviceStatus] = useState<"connected" | "offline">(
     "offline"
@@ -36,83 +37,40 @@ export function SectionCards() {
 
   const { brewery } = useActiveBrewery();
 
-  // Fetch Recipes
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/recipes/by-brewery-members?brewery_id=${brewery?.id}`
-        );
-        const data = await res.json();
-        setTotalRecipes(data.length);
-      } catch (err) {
-        console.error("Failed to fetch recipes:", err);
+    if (!brewery?.id) return;
+
+    fetchRecipes(brewery.id)
+      .then((data) => setTotalRecipes(data.length))
+      .catch((err) => {
+        console.error(err);
         setTotalRecipes("Error");
-      }
-    };
+      });
 
-    if (brewery?.id) fetchRecipes();
-  }, [brewery?.id]);
-
-  // Fetch Members
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/breweries/${brewery?.id}`
-        );
-        const data = await res.json();
-        setTotalMembers(data.brewery_members?.length ?? 0);
-      } catch (err) {
-        console.error("Failed to fetch members:", err);
+    fetchMembers(brewery.id)
+      .then((count) => setTotalMembers(count))
+      .catch((err) => {
+        console.error(err);
         setTotalMembers("Error");
-      }
-    };
+      });
 
-    if (brewery?.id) fetchMembers();
-  }, [brewery?.id]);
-
-  // Fetch Brews
-  useEffect(() => {
-    const fetchBrews = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/brews?brewery_id=${brewery?.id}`
-        );
-        const data = await res.json();
-        setTotalBrews(data.length);
-      } catch (err) {
-        console.error("Failed to fetch brews:", err);
+    fetchBrews(brewery.id)
+      .then((data) => setTotalBrews(data.length))
+      .catch((err) => {
+        console.error(err);
         setTotalBrews("Error");
-      }
-    };
+      });
 
-    if (brewery?.id) fetchBrews();
-  }, [brewery?.id]);
-
-  // Fetch Sensor Temperature & Status
-  useEffect(() => {
-    const fetchSensor = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/sensor-status?brewery_id=${
-            brewery?.id
-          }`
-        );
-        const data = await res.json();
-        // Adjust these fields according to your API response:
+    fetchSensorStatus(brewery.id)
+      .then((data) => {
         setDeviceTemp(data.temperatureCelsius ?? null);
         setDeviceStatus(data.status === "connected" ? "connected" : "offline");
-      } catch (err) {
-        console.error("Failed to fetch sensor data:", err);
+      })
+      .catch((err) => {
+        console.error(err);
         setDeviceTemp(null);
         setDeviceStatus("offline");
-      }
-    };
-
-    if (brewery?.id) fetchSensor();
+      });
   }, [brewery?.id]);
 
   return (
