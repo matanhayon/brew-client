@@ -100,3 +100,11 @@ export interface BrewingStep {
   durationMin?: number;
   notes?: string;
 }
+
+export interface Device {
+  id: number;
+  created_at: string;
+  brewery_id: number;
+  name: string;
+  secret_key: string;
+}

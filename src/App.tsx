@@ -17,6 +17,7 @@ import { ActiveBreweryProvider } from "@/context/ActiveBreweryContext";
 import BreweryMembersRecipesPage from "./pages/Dashboard/BreweryMembersRecipesPage";
 import AuthPage from "./pages/AuthPage";
 import BuildRecipePage from "./pages/Dashboard/BuildRecipe";
+import DeviceManager from "./pages/SettingsPage";
 
 function App() {
   return (
@@ -30,6 +31,15 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/community/recipes" element={<RecipesPage />} />
               <Route path="/community/recipes/:id" element={<RecipeDetail />} />
+
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <DeviceManager />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/dashboard"

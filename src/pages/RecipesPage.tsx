@@ -59,9 +59,9 @@ const RecipesPage = () => {
             <Link
               to={`/community/recipes/${recipe.id}`}
               key={recipe.id}
-              className="block hover:shadow-md transition overflow-hidden rounded"
+              className="block h-full"
             >
-              <Card>
+              <Card className="flex flex-col h-full">
                 {recipe.imageUrl && (
                   <img
                     src={recipe.imageUrl}
@@ -75,7 +75,7 @@ const RecipesPage = () => {
                     {recipe.style}
                   </p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="mt-auto">
                   <p className="text-sm line-clamp-3">{recipe.description}</p>
                   <div className="mt-4 text-xs text-muted-foreground">
                     {recipe.targetABV ? `ABV: ${recipe.targetABV}%` : "ABV: -"}{" "}
