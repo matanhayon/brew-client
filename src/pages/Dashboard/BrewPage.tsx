@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 
-type BrewStatus = "pending" | "in_progress" | "completed";
+type BrewStatus = "pending" | "started" | "ended";
 
 type HopAddition = {
   name: string;
@@ -44,6 +44,12 @@ type Brew = {
   final_gravity?: number;
   abv?: number;
   secret_key?: string;
+  mash_status?: BrewStatus;
+  boil_status?: BrewStatus;
+  mash_start?: string | null;
+  mash_end?: string | null;
+  boil_start?: string | null;
+  boil_end?: string | null;
 };
 
 type BrewTempLog = {
@@ -65,56 +71,80 @@ const BrewPage = () => {
   const [loadingBrew, setLoadingBrew] = useState(true);
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [now, setNow] = useState<Date>(new Date());
+
+  // Live ticking clock
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatDuration = (start?: string | null, end?: string | null) => {
+    if (!start) return "-";
+    const startDate = new Date(start);
+    const endDate = end ? new Date(end) : new Date();
+    const durationMin = Math.round(
+      (endDate.getTime() - startDate.getTime()) / 60000
+    );
+    return `${durationMin} min`;
+  };
+
+  const getRemainingTime = (
+    start: string | null | undefined,
+    totalMinutes: number | undefined
+  ): string | null => {
+    if (!start || !totalMinutes) return null;
+    const startTime = new Date(start);
+    const endTime = new Date(startTime.getTime() + totalMinutes * 60000);
+    const diffMs = endTime.getTime() - now.getTime();
+    if (diffMs <= 0) return "Completed";
+    const mins = Math.floor(diffMs / 60000);
+    const secs = Math.floor((diffMs % 60000) / 1000);
+    return `${mins}m ${secs < 10 ? "0" : ""}${secs}s remaining`;
+  };
 
   useEffect(() => {
     if (!brewId || !isLoaded) return;
-
     const fetchBrew = () => {
+      setLoadingBrew(true);
       getBrewById(brewId)
-        .then((data) => {
-          setBrew(data);
-          setLoadingBrew(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoadingBrew(false);
-        });
+        .then(setBrew)
+        .catch((err) => setError(err.message))
+        .finally(() => setLoadingBrew(false));
     };
-
-    setLoadingBrew(true);
     fetchBrew();
-
     const interval = setInterval(fetchBrew, 10000);
     return () => clearInterval(interval);
   }, [brewId, isLoaded]);
 
   useEffect(() => {
-    if (!brew || brew.status !== "in_progress") return;
-
+    if (!brew || brew.status !== "started") return;
     const fetchLogs = () => {
       setLoadingLogs(true);
       getBrewTempLogs(brew.id)
-        .then((logs) => {
-          setTempLogs(logs);
-          setLoadingLogs(false);
-        })
-        .catch(() => setLoadingLogs(false));
+        .then(setTempLogs)
+        .finally(() => setLoadingLogs(false));
     };
-
     fetchLogs();
-
     const interval = setInterval(fetchLogs, 10000);
     return () => clearInterval(interval);
   }, [brew]);
 
-  if (loadingBrew)
+  const badgeStyles = {
+    pending: "bg-orange-100 text-orange-800",
+    started: "bg-blue-100 text-blue-800",
+    ended: "bg-green-100 text-green-800",
+  };
+
+  if (loadingBrew) {
     return (
       <div className="py-20 flex justify-center">
         <Progress className="w-24" />
       </div>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className="py-20 px-4">
         <Alert variant="destructive">
@@ -123,29 +153,21 @@ const BrewPage = () => {
         </Alert>
       </div>
     );
+  }
 
-  if (!brew)
+  if (!brew) {
     return (
       <div className="py-20 px-4">
         <p>No brew found.</p>
       </div>
     );
-
-  const badgeBg = {
-    pending: "bg-orange-100",
-    in_progress: "bg-blue-100",
-    completed: "bg-green-100",
-  };
-  const badgeText = {
-    pending: "text-orange-800",
-    in_progress: "text-blue-800",
-    completed: "text-green-800",
-  };
+  }
 
   return (
     <div className="py-10 px-4 max-w-4xl mx-auto space-y-8">
       <h2 className="text-2xl font-bold">{brew.recipe_snapshot.name}</h2>
 
+      {/* Brew Info */}
       <Card>
         <CardHeader>
           <CardTitle>Brew Information</CardTitle>
@@ -153,10 +175,7 @@ const BrewPage = () => {
         <CardContent className="space-y-3">
           <div className="flex items-center space-x-2">
             <span>Status:</span>
-            <Badge
-              variant="outline"
-              className={`${badgeBg[brew.status]} ${badgeText[brew.status]}`}
-            >
+            <Badge variant="outline" className={badgeStyles[brew.status]}>
               {brew.status.replace("_", " ")}
             </Badge>
           </div>
@@ -177,58 +196,7 @@ const BrewPage = () => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Brewing Steps</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Mash Step */}
-          <div>
-            <h4 className="font-semibold text-lg mb-1">Mash</h4>
-            <p>
-              Mash at <strong>{brew.recipe_snapshot.mashTempC ?? "-"}°C</strong>{" "}
-              for{" "}
-              <strong>{brew.recipe_snapshot.mashTimeMin ?? "-"} minutes</strong>
-              .
-            </p>
-          </div>
-
-          {/* Boil Step */}
-          <div>
-            <h4 className="font-semibold text-lg mb-1">Boil</h4>
-            <p>
-              Boil for{" "}
-              <strong>{brew.recipe_snapshot.boilTimeMin ?? "-"} minutes</strong>
-              .
-            </p>
-
-            {/* Hops schedule */}
-            {brew.recipe_snapshot.hops &&
-              brew.recipe_snapshot.hops.length > 0 && (
-                <div className="mt-2">
-                  <p className="font-medium">Hop Additions:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    {brew.recipe_snapshot.hops
-                      .sort((a, b) => {
-                        const timeA = parseInt(a.time || "0");
-                        const timeB = parseInt(b.time || "0");
-                        return timeB - timeA;
-                      })
-                      .map((hop, index) => (
-                        <li key={index}>
-                          <strong>{hop.name}</strong> – {hop.amount}g{" "}
-                          {hop.time
-                            ? `@ ${hop.time} min`
-                            : "(dry hop or flameout)"}
-                        </li>
-                      ))}
-                  </ul>
-                </div>
-              )}
-          </div>
-        </CardContent>
-      </Card>
-
+      {/* Pending Brew */}
       {brew.status === "pending" && (
         <Alert variant="destructive" className="max-w-lg">
           <AlertTitle>Pending Brew</AlertTitle>
@@ -240,7 +208,8 @@ const BrewPage = () => {
         </Alert>
       )}
 
-      {brew.status === "in_progress" && (
+      {/* Active Brew */}
+      {brew.status === "started" && (
         <Card>
           <CardHeader>
             <CardTitle>Brewing Process</CardTitle>
@@ -273,7 +242,8 @@ const BrewPage = () => {
         </Card>
       )}
 
-      {brew.status === "completed" && (
+      {/* Ended Brew */}
+      {brew.status === "ended" && (
         <Card>
           <CardHeader>
             <CardTitle>Brew Log</CardTitle>
@@ -295,6 +265,103 @@ const BrewPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Brewing Timeline</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ol className="relative border-l border-gray-300 space-y-8">
+            {/* Mash Step */}
+            <li className="ml-4">
+              <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-1.5 top-1" />
+              <h4 className="text-lg font-semibold">Mash</h4>
+              <p className="text-sm text-muted-foreground">
+                Target:{" "}
+                <strong>{brew.recipe_snapshot.mashTempC ?? "-"}°C</strong> for{" "}
+                <strong>{brew.recipe_snapshot.mashTimeMin ?? "-"} min</strong>
+              </p>
+              <div className="text-sm mt-1 text-gray-500">
+                {brew.mash_status === "pending" && <p>Status: Not started</p>}
+                {brew.mash_status === "started" && brew.mash_start && (
+                  <>
+                    <p>Started: {new Date(brew.mash_start).toLocaleString()}</p>
+                    <p>
+                      {getRemainingTime(
+                        brew.mash_start,
+                        brew.recipe_snapshot.mashTimeMin
+                      )}
+                    </p>
+                  </>
+                )}
+                {brew.mash_status === "ended" &&
+                  brew.mash_start &&
+                  brew.mash_end && (
+                    <p>
+                      Completed: {new Date(brew.mash_end).toLocaleString()} (
+                      {formatDuration(brew.mash_start, brew.mash_end)})
+                    </p>
+                  )}
+              </div>
+            </li>
+
+            {/* Boil Step */}
+            <li className="ml-4">
+              <div className="absolute w-3 h-3 bg-red-500 rounded-full -left-1.5 top-1" />
+              <h4 className="text-lg font-semibold">Boil</h4>
+              <p className="text-sm text-muted-foreground">
+                Duration:{" "}
+                <strong>{brew.recipe_snapshot.boilTimeMin ?? "-"} min</strong>
+              </p>
+              <div className="text-sm mt-1 text-gray-500">
+                {brew.boil_status === "pending" && <p>Status: Not started</p>}
+                {brew.boil_status === "started" && brew.boil_start && (
+                  <>
+                    <p>Started: {new Date(brew.boil_start).toLocaleString()}</p>
+                    <p>
+                      {getRemainingTime(
+                        brew.boil_start,
+                        brew.recipe_snapshot.boilTimeMin
+                      )}
+                    </p>
+                  </>
+                )}
+                {brew.boil_status === "ended" &&
+                  brew.boil_start &&
+                  brew.boil_end && (
+                    <p>
+                      Completed: {new Date(brew.boil_end).toLocaleString()} (
+                      {formatDuration(brew.boil_start, brew.boil_end)})
+                    </p>
+                  )}
+              </div>
+
+              {/* Hop Additions */}
+              {(brew.recipe_snapshot.hops ?? []).length > 0 && (
+                <div className="mt-3">
+                  <p className="font-medium">Hop Additions:</p>
+                  <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                    {[...(brew.recipe_snapshot.hops ?? [])]
+                      .sort(
+                        (a, b) =>
+                          parseInt(b.time ?? "0") - parseInt(a.time ?? "0")
+                      )
+                      .map((hop, index) => (
+                        <li key={index}>
+                          <strong>{hop.name}</strong> – {hop.amount}g{" "}
+                          {hop.time
+                            ? `@ ${hop.time} min`
+                            : "(dry hop or flameout)"}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+          </ol>
+        </CardContent>
+      </Card>
     </div>
   );
 };
