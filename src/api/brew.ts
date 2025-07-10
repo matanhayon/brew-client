@@ -29,7 +29,7 @@ export const testBreweryConnection = async (
 };
 
 export const getBrewById = async (id: string | number) => {
-  const res = await axios.get(`${API_URL}/brews/${id}`);
+  const res = await axios.get(`${API_URL}/brews/watch/${id}`);
   return res.data;
 };
 
