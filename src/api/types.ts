@@ -108,3 +108,57 @@ export interface Device {
   name: string;
   secret_key: string;
 }
+
+export type BrewStatus = "pending" | "started" | "ended";
+
+// This models the recipe snapshot inside a Brew:
+export interface RecipeSnapshot {
+  user_id: string;
+  name: string;
+  style: string;
+  description?: string;
+  targetABV?: number;
+  targetIBU?: number;
+  boilTimeMin?: number;
+  mashTempC?: number;
+  mashTimeMin?: number;
+  grains: Grain[];
+  hops: Hop[];
+  yeasts: Yeast[];
+  notes?: string | null;
+  // add more recipe fields if your snapshot has them
+}
+
+export interface Brew {
+  id: string;
+  brewery_id: string;
+  user_id: string;
+  recipe_id: string;
+
+  recipe_snapshot: RecipeSnapshot;
+
+  created_at: string;
+  ended_at?: string | null;
+  status: BrewStatus;
+  notes?: string | null;
+
+  original_gravity?: number | null;
+  final_gravity?: number | null;
+  abv?: number | null;
+  secret_key?: string | null;
+
+  mash_status?: BrewStatus;
+  mash_start?: string | null;
+  mash_end?: string | null;
+
+  boil_status?: BrewStatus;
+  boil_start?: string | null;
+  boil_end?: string | null;
+}
+
+export interface BrewTempLog {
+  id: string;
+  brew_id: string;
+  temperature_celsius: number;
+  recorded_at: string;
+}
