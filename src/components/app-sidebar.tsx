@@ -9,6 +9,7 @@ import * as React from "react";
 import {
   IconChartBar,
   IconDashboard,
+  IconFlask2,
   // IconDatabase,
   IconFolder,
   IconHome,
@@ -59,6 +60,11 @@ const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: IconDashboard,
+    },
+    {
+      title: "Brews",
+      url: "/dashboard/brews",
+      icon: IconFlask2,
     },
     {
       title: "My Recipes",

@@ -27,3 +27,15 @@ export const testBreweryConnection = async (
     params: { brewery_id },
   });
 };
+
+export const getBrewById = async (id: string | number) => {
+  const res = await axios.get(`${API_URL}/brews/${id}`);
+  return res.data;
+};
+
+export const getBrewTempLogs = async (brewId: string | number) => {
+  const res = await axios.get(`${API_URL}/brews/temperature_logs`, {
+    params: { brew_id: brewId },
+  });
+  return res.data;
+};

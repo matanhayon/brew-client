@@ -19,6 +19,8 @@ import AuthPage from "./pages/AuthPage";
 import BuildRecipePage from "./pages/Dashboard/BuildRecipe";
 import DeviceManager from "./pages/SettingsPage";
 import BrewSetupPage from "./pages/Dashboard/BrewSetupPage";
+import BreweryBrewsPage from "./pages/Dashboard/BreweryBrewsPage";
+import BrewPage from "./pages/Dashboard/BrewPage";
 
 function App() {
   return (
@@ -38,6 +40,24 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <BrewSetupPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dashboard/brews"
+                element={
+                  <ProtectedRoute>
+                    <BreweryBrewsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/brew/:brewId"
+                element={
+                  <ProtectedRoute>
+                    <BrewPage />
                   </ProtectedRoute>
                 }
               />
