@@ -21,7 +21,7 @@ export const createDevice = async (device: {
 };
 
 // Update device status
-export const updateDevice = async (id: number, device: { status: string }) => {
+export const updateDevice = async (id: number, device: { name: string }) => {
   return api.patch<Device>(`/${id}/status`, device);
 };
 
