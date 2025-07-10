@@ -189,15 +189,21 @@ const DeviceManager: React.FC = () => {
                           key={device.id}
                           className="hover:bg-muted transition-colors"
                         >
-                          <td className="py-4 px-4 border-b border-border truncate max-w-xs">
+                          <td className="py-4 px-4  truncate max-w-xs">
                             {device.name || "Unnamed Device"}
                           </td>
-                          <td className="py-4 px-4 border-b border-border font-mono select-all">
+                          <td className="py-4 px-4  font-mono select-all">
                             {revealSecrets[device.id]
                               ? device.secret_key
-                              : device.secret_key?.replace(/./g, "•") || "N/A"}
+                              : device.secret_key
+                              ? "•"
+                                  .repeat(
+                                    Math.min(device.secret_key.length, 20)
+                                  )
+                                  .padEnd(30, "•")
+                              : "N/A"}
                           </td>
-                          <td className="py-4 px-4 border-b border-border flex gap-2">
+                          <td className="py-4 px-4  flex gap-2">
                             <Button
                               variant="outline"
                               size="sm"
