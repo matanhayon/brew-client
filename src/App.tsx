@@ -18,6 +18,7 @@ import BreweryMembersRecipesPage from "./pages/Dashboard/BreweryMembersRecipesPa
 import AuthPage from "./pages/AuthPage";
 import BuildRecipePage from "./pages/Dashboard/BuildRecipe";
 import DeviceManager from "./pages/SettingsPage";
+import BrewSetupPage from "./pages/Dashboard/BrewSetupPage";
 
 function App() {
   return (
@@ -31,6 +32,15 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/community/recipes" element={<RecipesPage />} />
               <Route path="/community/recipes/:id" element={<RecipeDetail />} />
+
+              <Route
+                path="/dashboard/brew/:recipe_id"
+                element={
+                  <ProtectedRoute>
+                    <BrewSetupPage />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/settings"
