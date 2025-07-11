@@ -39,3 +39,10 @@ export const getBrewTempLogs = async (brewId: string | number) => {
   });
   return res.data;
 };
+
+export const endBrew = async (brewId: string | number) => {
+  const res = await axios.post(`${API_URL}/brews/end`, {
+    brew_id: brewId,
+  });
+  return res.data;
+};

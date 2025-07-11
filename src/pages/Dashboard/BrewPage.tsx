@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import { getBrewById } from "@/api/brew";
+import { getBrewById, endBrew } from "@/api/brew";
 
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 import BrewInfoCard from "./components/BrewInfoCard";
 import TemperatureLogSection from "@/pages/Dashboard/components/TemperatureLogSection";
@@ -22,6 +23,7 @@ const BrewPage = () => {
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState<Date>(new Date());
+  const [ending, setEnding] = useState(false);
 
   // Live ticking clock for countdown timers
   useEffect(() => {
@@ -51,6 +53,22 @@ const BrewPage = () => {
     const mins = Math.floor(diffMs / 60000);
     const secs = Math.floor((diffMs % 60000) / 1000);
     return `${mins}m ${secs < 10 ? "0" : ""}${secs}s remaining`;
+  };
+
+  const handleEndBrew = async () => {
+    if (!brewId) return;
+    setEnding(true);
+    try {
+      await endBrew(brewId);
+      const updated = await getBrewById(brewId);
+      setBrew(updated);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to end brew", err);
+      setError("Failed to end brew");
+    } finally {
+      setEnding(false);
+    }
   };
 
   // Initial fetch + polling without flickering loading state
@@ -121,10 +139,6 @@ const BrewPage = () => {
       <BrewInfoCard brew={brew} />
       <BrewStatusSection brew={brew} />
 
-      {brew.status === "started" && (
-        <TemperatureLogSection brewId={brew.id} brewStatus={brew.status} />
-      )}
-
       {brew.status === "ended" && <EndedBrewCard brew={brew} />}
 
       <BrewTimeline
@@ -132,6 +146,21 @@ const BrewPage = () => {
         formatDuration={formatDuration}
         getRemainingTime={getRemainingTime}
       />
+
+      {brew.status === "started" && (
+        <>
+          <TemperatureLogSection brewId={brew.id} brewStatus={brew.status} />
+          <div className="flex justify-center pt-4">
+            <Button
+              onClick={handleEndBrew}
+              disabled={ending}
+              className="px-6 py-2 text-base font-semibold rounded-2xl shadow-md"
+            >
+              {ending ? "Ending..." : "End Brew"}
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 };
