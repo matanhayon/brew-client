@@ -86,12 +86,12 @@ const data = {
   ],
   documents: [
     {
-      name: "Browse Recepies",
+      name: "Recepies",
       url: "/community/recipes",
       icon: IconFolder,
     },
     {
-      name: "Browse Breweries",
+      name: "Breweries",
       url: "/community/breweries",
       icon: IconUsers,
     },
