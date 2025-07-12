@@ -1,10 +1,10 @@
 import { useUser } from "@clerk/clerk-react";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
+// import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+// import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
-import data from "./data.json";
+// import data from "./data.json";
 import { BreweryUserManager } from "./components/BreweryUserManager";
-
+import { AllBrewsTempChart } from "./components/AllBrewsTempChart";
 export default function Dashboard() {
   const { isLoaded, isSignedIn } = useUser();
 
@@ -31,11 +31,11 @@ export default function Dashboard() {
   return (
     <>
       <SectionCards />
-      <BreweryUserManager />
       <div className="px-4 lg:px-6">
-        <ChartAreaInteractive />
+        <AllBrewsTempChart />
       </div>
-      <DataTable data={data} />
+      <BreweryUserManager />
+      {/* <DataTable data={data} /> */}
     </>
   );
 }

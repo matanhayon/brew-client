@@ -134,14 +134,16 @@ const BrewPage = () => {
   }
 
   return (
-    <div className="py-10 px-4 max-w-4xl mx-auto space-y-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <h2 className="text-2xl font-bold">{brew.recipe_snapshot.name}</h2>
 
       <BrewInfoCard brew={brew} />
       <BrewStatusSection brew={brew} />
 
       {brew.status === "ended" && <EndedBrewCard brew={brew} />}
-      {brew.status === "ended" && <BrewTempChart brewId={Number(brew.id)} />}
+      {(brew.status === "ended" || brew.status === "started") && (
+        <BrewTempChart brewId={Number(brew.id)} />
+      )}
 
       <BrewTimeline
         brew={brew}
