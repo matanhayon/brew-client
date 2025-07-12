@@ -12,6 +12,7 @@ import TemperatureLogSection from "@/pages/Dashboard/components/TemperatureLogSe
 import EndedBrewCard from "@/pages/Dashboard/components/EndedBrewCard";
 import BrewStatusSection from "@/pages/Dashboard/components/BrewStatusSection";
 import BrewTimeline from "./components/BrewTimeline";
+import { BrewTempChart } from "./components/BrewTempChart";
 
 import type { Brew } from "@/api/types";
 
@@ -140,6 +141,7 @@ const BrewPage = () => {
       <BrewStatusSection brew={brew} />
 
       {brew.status === "ended" && <EndedBrewCard brew={brew} />}
+      {brew.status === "ended" && <BrewTempChart brewId={Number(brew.id)} />}
 
       <BrewTimeline
         brew={brew}
